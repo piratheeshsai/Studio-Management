@@ -18,6 +18,13 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('USER_READ')
+  @Get('users')
+  async getAllUsers() {
+    return this.authService.getAllUsers();
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);

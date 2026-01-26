@@ -65,6 +65,22 @@ export class AuthService {
     });
   }
 
+  async getAllUsers() {
+    return this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        role: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  }
+
   async generateToken(user: any, roleId?: string) {
       // If user object doesn't have role loaded, we might need to fetch it.
       // But login fetches it. Register has roleId.

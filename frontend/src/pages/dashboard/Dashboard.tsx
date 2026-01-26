@@ -1,76 +1,87 @@
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { motion } from 'framer-motion';
-import { LogOut, User, Shield } from 'lucide-react';
+
+import DashboardCard from '../../components/dashboard/DashboardCard';
+import LivePreviewCard from '../../components/dashboard/widgets/LivePreviewCard';
+import AIProcessingStatus from '../../components/dashboard/widgets/AIProcessingStatus';
+import StatsCard from '../../components/dashboard/widgets/StatsCard';
+import AlbumBuilderPreview from '../../components/dashboard/widgets/AlbumBuilderPreview';
+import CollaborationPanel from '../../components/dashboard/widgets/CollaborationPanel';
+import ClientInteractionPanel from '../../components/dashboard/widgets/ClientInteractionPanel';
+import RevenueChart from '../../components/dashboard/widgets/RevenueChart';
+import CloudStorageCard from '../../components/dashboard/widgets/CloudStorageCard';
+import { Image, Users, Layers, Zap } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
-    const { user, logout } = useAuth();
-
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 p-8">
-            <div className="max-w-6xl mx-auto">
-                <header className="flex justify-between items-center mb-12">
-                    <div>
-                        <h1 className="text-4xl font-bold text-white mb-2">Studio Dashboard</h1>
-                        <p className="text-slate-400">Welcome back, {user?.name}</p>
-                    </div>
-                    <button
-                        onClick={logout}
-                        className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg transition-colors border border-slate-700"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                    </button>
-                </header>
+        <>
+            {/* Main Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm"
-                    >
-                        <div className="bg-blue-500/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                            <User className="w-5 h-5 text-blue-400" />
-                        </div>
-                        <h3 className="text-slate-400 text-sm font-medium mb-1">Profile</h3>
-                        <p className="text-lg font-semibold text-white">{user?.email}</p>
-                    </motion.div>
+                {/* Row 1: Hero (Live Preview) + Stats Column */}
+                <LivePreviewCard />
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm"
-                    >
-                        <div className="bg-purple-500/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                            <Shield className="w-5 h-5 text-purple-400" />
-                        </div>
-                        <h3 className="text-slate-400 text-sm font-medium mb-1">Role</h3>
-                        <p className="text-lg font-semibold text-white">{user?.role}</p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm cursor-pointer hover:bg-white/10 transition-colors"
-                        onClick={() => window.location.href = '/register'}
-                    >
-                        <div className="bg-amber-500/20 w-10 h-10 rounded-lg flex items-center justify-center mb-4">
-                            <Shield className="w-5 h-5 text-amber-400" />
-                        </div>
-                        <h3 className="text-slate-400 text-sm font-medium mb-1">User Management</h3>
-                        <p className="text-lg font-semibold text-white">Add New User</p>
-                    </motion.div>
+                <div className="flex flex-col gap-6 md:col-span-1 lg:col-span-1 xl:col-span-1">
+                    <StatsCard
+                        title="Total Photos"
+                        value="24,593"
+                        subtext="+1,204 this week"
+                        icon={Image}
+                        color="blue"
+                        trend="+12%"
+                    />
+                    <StatsCard
+                        title="Active Clients"
+                        value="128"
+                        subtext="3 new today"
+                        icon={Users}
+                        color="purple"
+                        trend="+12%"
+                    />
+                    <StatsCard
+                        title="Projects"
+                        value="15"
+                        subtext="8 in progress"
+                        icon={Layers}
+                        color="amber"
+                    />
                 </div>
 
-                <div className="mt-12 bg-blue-600/10 border border-blue-600/20 rounded-3xl p-12 text-center">
-                    <h2 className="text-2xl font-bold text-white mb-4">Ready to manage your studio?</h2>
-                    <p className="text-slate-400 mb-8 max-w-md mx-auto">The full Studio and Album management modules are coming soon in the next development phase.</p>
+                <div className="flex flex-col gap-6 md:col-span-1 lg:col-span-1 xl:col-span-1">
+                    <AIProcessingStatus />
+                    <CloudStorageCard />
+                </div>
+
+
+                {/* Row 2: Interaction & Analytics */}
+                <div className="md:col-span-2 lg:col-span-2 xl:col-span-2">
+                    <RevenueChart />
+                </div>
+
+                <div className="md:col-span-1 lg:col-span-1 xl:col-span-1">
+                    <CollaborationPanel />
+                </div>
+
+                <div className="md:col-span-1 lg:col-span-1 xl:col-span-1">
+                    <ClientInteractionPanel />
+                </div>
+
+                {/* Row 3: Tools */}
+                <div className="md:col-span-2 lg:col-span-2 xl:col-span-3">
+                    <AlbumBuilderPreview />
+                </div>
+                <div className="md:col-span-1 lg:col-span-1 xl:col-span-1">
+                    <DashboardCard className="p-6 h-full flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-white/5 transition-colors">
+                        <div className="p-4 bg-white/5 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                            <Zap className="w-8 h-8 text-amber-500" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-white mb-1">Quick Action</h3>
+                        <p className="text-xs text-slate-400">Create new workflow</p>
+                    </DashboardCard>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
 export default Dashboard;
+
