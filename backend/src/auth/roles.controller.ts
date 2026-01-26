@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { RequirePermissions } from './decorators/permissions.decorator';
@@ -11,8 +11,8 @@ export class RolesController {
 
   @Post()
   @RequirePermissions('USER_DELETE') // Restricted to Super Admin effectively
-  createRole(@Body('name') name: string) {
-    return this.rolesService.createRole(name);
+  createRole(@Body('name') name: string, @Body('permissions') permissions?: string[]) {
+    return this.rolesService.createRole(name, permissions);
   }
 
   @Get()
@@ -21,9 +21,22 @@ export class RolesController {
     return this.rolesService.findAll();
   }
 
-  @Put(':id/permissions')
-  @RequirePermissions('USER_DELETE')
-  assignPermissions(@Param('id') id: string, @Body('permissions') permissions: string[]) {
-    return this.rolesService.assignPermissions(id, permissions);
+  @Get('permissions')
+  @RequirePermissions('ROLE_READ')
+  listPermissions() {
+      return this.rolesService.getAllPermissions();
+  }
+
+  @Get(':id')
+  @RequirePermissions('ROLE_READ')
+  findOne(@Param('id') id: string) {
+      return this.rolesService.findOne(id);
+  }
+
+  @Delete(':id')
+  @RequirePermissions('ROLE_DELETE')
+  deleteRole(@Param('id') id: string) {
+      return this.rolesService.deleteRole(id);
   }
 }
+

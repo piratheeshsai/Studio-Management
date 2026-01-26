@@ -15,4 +15,7 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   role?: string;
+
+  @IsOptional()
+  mustChangePassword?: boolean;
 }

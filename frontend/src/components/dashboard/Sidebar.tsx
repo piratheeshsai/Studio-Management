@@ -9,11 +9,13 @@ import {
     BarChart3,
     UserCog,
     Settings,
+    Shield,
     ChevronRight,
     ChevronLeft
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext'; // Import useAuth
 
 interface SidebarProps {
     isExpanded: boolean;
@@ -23,6 +25,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isExpanded, toggle }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { hasPermission } = useAuth(); // Get helper
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -32,7 +35,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, toggle }) => {
         { icon: BookOpen, label: 'Albums', path: '/albums' },
         { icon: Sparkles, label: 'AI Assistance', path: '/ai-assistance' },
         { icon: BarChart3, label: 'Revenue', path: '/revenue' },
-        { icon: UserCog, label: 'Users', path: '/users' },
+        // Only show Users link if user has permission
+        ...(hasPermission('USER_READ') ? [{ icon: UserCog, label: 'Users', path: '/users' }] : []),
         { icon: Settings, label: 'Settings', path: '/settings' },
     ];
 

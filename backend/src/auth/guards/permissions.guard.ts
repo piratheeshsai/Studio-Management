@@ -20,8 +20,16 @@ export class PermissionsGuard implements CanActivate {
     
     // User object comes from JwtStrategy: { userId, username, role, permissions: [] }
     if (!user || !user.permissions) {
+       console.log('PermissionsGuard: No user or permissions', user); // DEBUG
        return false;
     }
+
+    if (user.role === 'SUPER_ADMIN') {
+        return true;
+    }
+
+    console.log('PermissionsGuard: User permissions:', user.permissions); // DEBUG
+    console.log('PermissionsGuard: Required permissions:', requiredPermissions); // DEBUG
 
     // Check if user has ALL required permissions
     const hasPermission = requiredPermissions.every((permission) =>

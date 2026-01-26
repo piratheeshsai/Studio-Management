@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ShieldCheck } from 'lucide-react';
 import UserManagement from './components/UserManagement';
-import RoleManagement from './components/RoleManagement';
+import RolesManagement from '../roles/RolesManagement';
 
 const UsersPage = () => {
     const [activeTab, setActiveTab] = useState<'users' | 'roles'>('users');
@@ -61,7 +61,7 @@ const UsersPage = () => {
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
                     >
-                        {activeTab === 'users' ? <UserManagement /> : <RoleManagement />}
+                        {activeTab === 'users' ? <UserManagement /> : <RolesManagement />}
                     </motion.div>
                 </AnimatePresence>
             </div>

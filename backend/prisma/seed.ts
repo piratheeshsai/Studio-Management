@@ -12,10 +12,15 @@ const PERMISSIONS = [
   { name: 'Read User', slug: 'USER_READ' },
   { name: 'Update User', slug: 'USER_UPDATE' },
   { name: 'Delete User', slug: 'USER_DELETE' },
+  { name: 'Create Role', slug: 'ROLE_CREATE' },
+  { name: 'Read Role', slug: 'ROLE_READ' },
+  { name: 'Update Role', slug: 'ROLE_UPDATE' },
+  { name: 'Delete Role', slug: 'ROLE_DELETE' },
+  { name: 'Manage Settings', slug: 'SETTINGS_MANAGE' },
 ];
 
 const ROLES = {
-  SUPER_ADMIN: ['USER_CREATE', 'USER_READ', 'USER_UPDATE', 'USER_DELETE'],
+  SUPER_ADMIN: PERMISSIONS.map(p => p.slug),
   ADMIN: ['USER_CREATE', 'USER_READ', 'USER_UPDATE'],
   OWNER: ['USER_READ'],
   EDITOR: [],

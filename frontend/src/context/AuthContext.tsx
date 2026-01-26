@@ -7,6 +7,7 @@ interface AuthContextType extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (data: any) => Promise<void>;
     logout: () => void;
+    hasPermission: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 name: decoded.name || '',
                 role: decoded.role,
                 permissions: decoded.permissions || [],
+                mustChangePassword: decoded.mustChangePassword,
             };
             setState({
                 user,
@@ -62,6 +64,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
     };
 
+    const hasPermission = (permission: string): boolean => {
+        if (!state.user || !state.user.permissions) return false;
+        return state.user.permissions.includes(permission);
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         if (token) {
@@ -72,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, [decodeAndSetUser]);
 
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout }}>
+        <AuthContext.Provider value={{ ...state, login, register, logout, hasPermission }}>
             {children}
         </AuthContext.Provider>
     );

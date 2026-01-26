@@ -33,7 +33,8 @@ model User {
   email     String   @unique
   name      String
   password  String
-  
+  status    String   @default("Active")
+  mustChangePassword Boolean @default(false)
   roleId    String?  @db.Uuid
   role      Role?    @relation(fields: [roleId], references: [id])
   

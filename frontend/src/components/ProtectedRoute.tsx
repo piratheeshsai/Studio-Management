@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 const ProtectedRoute: React.FC = () => {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading } = useAuth();
 
     if (isLoading) {
         return (
@@ -16,6 +16,10 @@ const ProtectedRoute: React.FC = () => {
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
+    }
+
+    if (user?.mustChangePassword) {
+        return <Navigate to="/change-password" replace />;
     }
 
     return <Outlet />;

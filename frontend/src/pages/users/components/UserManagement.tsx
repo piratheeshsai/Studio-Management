@@ -1,9 +1,17 @@
-
-import { Plus, Search, MoreVertical, Filter, Loader2, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, Search, MoreVertical, Filter, Loader2, RefreshCw, Pencil, Trash2 } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { toast } from 'sonner';
 import { useUsers } from '../../../hooks/useUsers';
+import { useAuth } from '../../../context/AuthContext';
+import AddUserModal from './AddUserModal';
 
 const UserManagement = () => {
-    const { users, loading, error, refetch } = useUsers();
+    const { hasPermission, user: currentUser } = useAuth();
+    const { users, loading, error, refetch, deactivateUser, deleteUser } = useUsers();
+    console.log('Users data:', users);
+
+    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
 
     return (
         <div className="space-y-6">
@@ -30,10 +38,15 @@ const UserManagement = () => {
                         <Filter size={18} />
                         <span>Filter</span>
                     </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-zinc-900/20 dark:shadow-white/20">
-                        <Plus size={18} />
-                        <span>Add User</span>
-                    </button>
+                    {hasPermission('USER_CREATE') && (
+                        <button
+                            onClick={() => setIsAddUserModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-zinc-900/20 dark:shadow-white/20"
+                        >
+                            <Plus size={18} />
+                            <span>Add User</span>
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -92,18 +105,83 @@ const UserManagement = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                Active
+                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${user.status === 'Active'
+                                                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                                : 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-300'
+                                                }`}>
+                                                <span className={`w-2 h-2 rounded-full ${user.status === 'Active' ? 'bg-green-500' : 'bg-zinc-500'}`}></span>
+                                                {user.status || 'Active'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-zinc-500 dark:text-zinc-400">
                                             {new Date(user.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button className="p-2 hover:bg-zinc-100 dark:hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">
-                                                <MoreVertical size={16} />
-                                            </button>
+                                            <DropdownMenu.Root>
+                                                <DropdownMenu.Trigger asChild>
+                                                    <button className="p-2 hover:bg-zinc-100 dark:hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 outline-none">
+                                                        <MoreVertical size={16} />
+                                                    </button>
+                                                </DropdownMenu.Trigger>
+                                                <DropdownMenu.Portal>
+                                                    <DropdownMenu.Content
+                                                        className="min-w-[160px] bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-200 dark:border-white/10 p-1 z-50 animate-in fade-in-0 zoom-in-95"
+                                                        align="end"
+                                                    >
+                                                        <DropdownMenu.Item
+                                                            className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/5 outline-none cursor-pointer"
+                                                            onClick={() => toast.info(`Edit user ${user.name}`)}
+                                                        >
+                                                            <Pencil size={14} />
+                                                            Edit
+                                                        </DropdownMenu.Item>
+
+                                                        {hasPermission('USER_DELETE') && (
+                                                            <>
+                                                                <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
+                                                                <DropdownMenu.Item
+                                                                    className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer"
+                                                                    onClick={async () => {
+                                                                        if (window.confirm(`Are you sure you want to deactivate ${user.name}? This will prevent them from logging in.`)) {
+                                                                            try {
+                                                                                await deactivateUser(user.id);
+                                                                                toast.success('User deactivated successfully');
+                                                                            } catch (error) {
+                                                                                toast.error('Failed to deactivate user');
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                    Deactivate
+                                                                </DropdownMenu.Item>
+                                                            </>
+                                                        )}
+
+                                                        {currentUser?.role === 'SUPER_ADMIN' && (
+                                                            <>
+                                                                <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
+                                                                <DropdownMenu.Item
+                                                                    className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer"
+                                                                    onClick={async () => {
+                                                                        if (window.confirm(`PERMANENT ACTION: Are you sure you want to PERMANENTLY DELETE ${user.name}? This cannot be undone.`)) {
+                                                                            try {
+                                                                                await deleteUser(user.id);
+                                                                                toast.success('User deleted permanently');
+                                                                            } catch (error) {
+                                                                                toast.error('Failed to delete user');
+                                                                            }
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                    Delete (Permanent)
+                                                                </DropdownMenu.Item>
+                                                            </>
+                                                        )}
+                                                    </DropdownMenu.Content>
+                                                </DropdownMenu.Portal>
+                                            </DropdownMenu.Root>
                                         </td>
                                     </tr>
                                 ))
@@ -112,6 +190,12 @@ const UserManagement = () => {
                     </table>
                 </div>
             </div>
+
+            <AddUserModal
+                isOpen={isAddUserModalOpen}
+                onClose={() => setIsAddUserModalOpen(false)}
+                onSuccess={refetch}
+            />
         </div>
     );
 };

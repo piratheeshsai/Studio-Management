@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param, Delete, ForbiddenException, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -25,9 +25,33 @@ export class AuthController {
     return this.authService.getAllUsers();
   }
 
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('USER_DELETE')
+  @Post('users/:id/deactivate')
+  async deactivateUser(@Param('id') id: string) {
+    return this.authService.deactivateUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('USER_DELETE')
+  @Delete('users/:id')
+  async deleteUser(@Param('id') id: string, @Req() req: any) {
+    // Extra security: Only SUPER_ADMIN can perform hard delete
+    if (req.user.role !== 'SUPER_ADMIN') {
+        throw new ForbiddenException('Only Super Admin can delete users permenantly');
+    }
+    return this.authService.deleteUser(id);
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('change-password')
+  async changePassword(@CurrentUser() user: any, @Body() dto: { password: string }) {
+    return this.authService.changePassword(user.userId, dto.password);
   }
 
   @UseGuards(JwtAuthGuard)

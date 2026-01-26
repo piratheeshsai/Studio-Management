@@ -1,10 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, ConflictException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -25,14 +25,23 @@ export class AuthService {
         throw new BadRequestException(`Role ${roleName} not found`);
     }
 
-    const user = await this.prisma.user.create({
-      data: {
-        email: dto.email,
-        name: dto.name,
-        password: hashedPassword,
-        roleId: role.id,
-      },
-    });
+    let user;
+    try {
+      user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          name: dto.name,
+          password: hashedPassword,
+          roleId: role.id,
+          mustChangePassword: dto.mustChangePassword || false,
+        },
+      });
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new ConflictException('Email already exists');
+      }
+      throw error;
+    }
     
     // Need to re-fetch user with permissions to generate token with permissions
     // Or just fetch role's permissions knowing the role object.
@@ -48,6 +57,10 @@ export class AuthService {
     
     if (!user || !(await bcrypt.compare(dto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.status !== 'Active') {
+        throw new UnauthorizedException('Your account is inactive. Please contact support.');
     }
     
     return this.generateToken(user);
@@ -67,10 +80,18 @@ export class AuthService {
 
   async getAllUsers() {
     return this.prisma.user.findMany({
+      where: {
+        role: {
+          name: {
+            not: 'SUPER_ADMIN',
+          },
+        },
+      },
       select: {
         id: true,
         name: true,
         email: true,
+        status: true,
         createdAt: true,
         role: {
           select: {
@@ -107,11 +128,58 @@ export class AuthService {
         sub: user.id, 
         email: user.email, 
         role: roleName,
-        permissions: permissions 
+        permissions: permissions,
+        mustChangePassword: user.mustChangePassword
     };
     
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async changePassword(userId: string, newPassword: string) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false,
+      },
+      include: { role: { include: { permissions: true } } } // Ensure role is loaded for token generation
+    });
+
+    return this.generateToken(updatedUser);
+  }
+
+  async deactivateUser(userId: string) {
+    const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        include: { role: true },
+    });
+
+    if (user?.role?.name === 'SUPER_ADMIN') {
+        throw new ForbiddenException('Cannot deactivate the Super Admin');
+    }
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { status: 'Inactive' },
+    });
+  }
+
+  async deleteUser(userId: string) {
+      const user = await this.prisma.user.findUnique({
+          where: { id: userId },
+          include: { role: true },
+      });
+  
+      if (user?.role?.name === 'SUPER_ADMIN') {
+          throw new ForbiddenException('Cannot delete the Super Admin');
+      }
+  
+      return this.prisma.user.delete({
+          where: { id: userId },
+      });
   }
 }
