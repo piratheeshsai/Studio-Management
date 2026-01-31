@@ -19,15 +19,22 @@ export class PermissionsGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
     
     // User object comes from JwtStrategy: { userId, username, role, permissions: [] }
-    if (!user || !user.permissions) {
-       console.log('PermissionsGuard: No user or permissions', user); // DEBUG
+    if (!user) {
+       console.log('PermissionsGuard: No user found'); // DEBUG
        return false;
     }
 
-    if (user.role === 'SUPER_ADMIN') {
+    // Check for Super Admin (handle both casing conventions) - PRIORITIZE THIS CHECK
+    if (['SUPER_ADMIN', 'Super Admin'].includes(user.role)) {
         return true;
     }
 
+    if (!user.permissions) {
+       console.log('PermissionsGuard: No permissions found for user', user); // DEBUG
+       return false;
+    }
+
+    console.log('PermissionsGuard: User role is:', user.role); // DEBUG
     console.log('PermissionsGuard: User permissions:', user.permissions); // DEBUG
     console.log('PermissionsGuard: Required permissions:', requiredPermissions); // DEBUG
 
@@ -37,6 +44,7 @@ export class PermissionsGuard implements CanActivate {
     );
     
     if (!hasPermission) {
+        console.log('PermissionsGuard: Access denied for user:', user.email); // DEBUG
         throw new ForbiddenException('Insufficient permissions');
     }
 

@@ -70,7 +70,7 @@ export const useRoles = () => {
         }
     };
 
-    const getRole = async (id: string) => {
+    const getRole = useCallback(async (id: string) => {
         try {
             const response = await api.get<Role>(`/roles/${id}`);
             return response.data;
@@ -78,7 +78,7 @@ export const useRoles = () => {
             toast.error(err.response?.data?.message || 'Failed to fetch role');
             return null;
         }
-    };
+    }, []);
 
     return {
         roles,

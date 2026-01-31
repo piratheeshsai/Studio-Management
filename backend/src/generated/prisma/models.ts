@@ -11,4 +11,7 @@
 export type * from './models/Permission.js'
 export type * from './models/Role.js'
 export type * from './models/User.js'
+export type * from './models/Package.js'
+export type * from './models/PackageItem.js'
+export type * from './models/Client.js'
 export type * from './commonInputTypes.js'

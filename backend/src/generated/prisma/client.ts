@@ -52,3 +52,18 @@ export type Role = Prisma.RoleModel
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model Package
+ * 
+ */
+export type Package = Prisma.PackageModel
+/**
+ * Model PackageItem
+ * 
+ */
+export type PackageItem = Prisma.PackageItemModel
+/**
+ * Model Client
+ * 
+ */
+export type Client = Prisma.ClientModel

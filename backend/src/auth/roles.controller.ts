@@ -33,6 +33,12 @@ export class RolesController {
       return this.rolesService.findOne(id);
   }
 
+  @Put(':id/permissions')
+  @RequirePermissions('ROLE_UPDATE')
+  assignPermissions(@Param('id') id: string, @Body('permissions') permissions: string[]) {
+    return this.rolesService.assignPermissions(id, permissions);
+  }
+
   @Delete(':id')
   @RequirePermissions('ROLE_DELETE')
   deleteRole(@Param('id') id: string) {

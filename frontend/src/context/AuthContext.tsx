@@ -65,7 +65,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const hasPermission = (permission: string): boolean => {
-        if (!state.user || !state.user.permissions) return false;
+        if (!state.user) return false;
+        // Check for Super Admin (handle both casing conventions)
+        if (['SUPER_ADMIN', 'Super Admin'].includes(state.user.role)) return true;
+
+        if (!state.user.permissions) return false;
         return state.user.permissions.includes(permission);
     };
 

@@ -10,11 +10,17 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 import CreateRolePage from './pages/roles/CreateRolePage';
 import EditRolePage from './pages/roles/EditRolePage';
+import PackagesPage from './pages/packages/PackagesPage';
+import ClientsPage from './pages/clients/ClientsPage';
+
+import { useTheme } from './context/ThemeContext';
 
 function App() {
+  const { theme } = useTheme();
+
   return (
     <AuthProvider>
-      <Toaster position="bottom-right" richColors />
+      <Toaster position="bottom-right" richColors style={{ zIndex: 9999 }} theme={theme === 'dark' ? 'dark' : 'light'} />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
@@ -26,7 +32,9 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/clients" element={<ClientsPage />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/packages" element={<PackagesPage />} />
               <Route path="/roles/create" element={<CreateRolePage />} />
               <Route path="/roles/:id/edit" element={<EditRolePage />} />
             </Route>

@@ -52,6 +52,32 @@ export const useUsers = () => {
         }
     };
 
+    const activateUser = async (userId: string) => {
+        try {
+            await api.post(`/auth/users/${userId}/activate`);
+            setUsers(current => current.map(u => 
+                u.id === userId ? { ...u, status: 'Active' } : u
+            ));
+            return true;
+        } catch (err: any) {
+            console.error(err);
+            throw err;
+        }
+    };
+
+    const updateUser = async (userId: string, data: { name?: string; email?: string; role?: string }) => {
+        try {
+            const response = await api.post(`/auth/users/${userId}`, data);
+            setUsers(current => current.map(u => 
+                u.id === userId ? { ...u, ...data, role: { name: data.role || u.role.name } } : u
+            ));
+            return response.data;
+        } catch (err: any) {
+            console.error(err);
+            throw err;
+        }
+    };
+
     const deleteUser = async (userId: string) => {
         try {
             await api.delete(`/auth/users/${userId}`);
@@ -64,5 +90,5 @@ export const useUsers = () => {
         }
     };
 
-    return { users, loading, error, refetch: fetchUsers, deactivateUser, deleteUser };
+    return { users, loading, error, refetch: fetchUsers, deactivateUser, activateUser, updateUser, deleteUser };
 };

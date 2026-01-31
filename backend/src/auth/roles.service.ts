@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -14,15 +14,22 @@ export class RolesService {
         permissionsConnect = permissions.map(p => ({ id: p.id }));
     }
 
-    return this.prisma.role.create({
-      data: { 
-          name,
-          permissions: {
-              connect: permissionsConnect
-          }
-      },
-      include: { permissions: true } 
-    });
+    try {
+        return await this.prisma.role.create({
+        data: { 
+            name,
+            permissions: {
+                connect: permissionsConnect
+            }
+        },
+        include: { permissions: true } 
+        });
+    } catch (error: any) {
+        if (error.code === 'P2002') {
+            throw new ConflictException(`Role with name "${name}" already exists`);
+        }
+        throw error;
+    }
   }
 
   async findAll() {

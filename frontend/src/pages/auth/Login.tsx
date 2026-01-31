@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, ArrowRight, Camera } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         }
     };
 
-    const itemVariants: any = {
+    const itemVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: {
             opacity: 1,
@@ -41,8 +41,9 @@ const Login: React.FC = () => {
         try {
             await login(email, password);
             navigate('/dashboard');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed');
+        } catch (err) {
+            const error = err as { response?: { data?: { message?: string } }; message?: string };
+            setError(error.response?.data?.message || error.message || 'Login failed');
         } finally {
             setLoading(false);
         }

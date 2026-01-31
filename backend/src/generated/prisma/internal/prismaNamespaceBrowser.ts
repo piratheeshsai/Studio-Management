@@ -53,7 +53,10 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Permission: 'Permission',
   Role: 'Role',
-  User: 'User'
+  User: 'User',
+  Package: 'Package',
+  PackageItem: 'PackageItem',
+  Client: 'Client'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -102,6 +105,51 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PackageScalarFieldEnum = {
+  id: 'id',
+  category: 'category',
+  name: 'name',
+  description: 'description',
+  basePrice: 'basePrice',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type PackageScalarFieldEnum = (typeof PackageScalarFieldEnum)[keyof typeof PackageScalarFieldEnum]
+
+
+export const PackageItemScalarFieldEnum = {
+  id: 'id',
+  packageId: 'packageId',
+  name: 'name',
+  type: 'type',
+  defDimensions: 'defDimensions',
+  defPages: 'defPages',
+  defQuantity: 'defQuantity',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PackageItemScalarFieldEnum = (typeof PackageItemScalarFieldEnum)[keyof typeof PackageItemScalarFieldEnum]
+
+
+export const ClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  internal_notes: 'internal_notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
 
 
 export const SortOrder = {

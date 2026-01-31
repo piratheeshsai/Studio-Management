@@ -23,7 +23,7 @@ const TopBar: React.FC = () => {
                         <path d="M20 16L14 28H26L20 16Z" className="fill-zinc-900 dark:fill-[#09090b]" />
                     </svg>
                 </div>
-                <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight font-sans transition-colors">Pirathees<span className="font-normal text-zinc-900 dark:text-white">Studio</span></span>
+                <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tight font-sans transition-colors">Stu<span className="font-normal text-zinc-900 dark:text-white">dio</span></span>
             </div>
 
             {/* 2. Search Bar (Centered) */}

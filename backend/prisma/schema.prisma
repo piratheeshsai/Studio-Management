@@ -41,3 +41,77 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ============================================
+// STUDIO MANAGEMENT MODELS
+// ============================================
+
+enum PackageCategory {
+  WEDDING
+  BIRTHDAY
+  COMMERCIAL
+  CORPORATE
+  MATERNITY
+  PRE_WEDDING
+  ENGAGEMENT
+  BABY_SHOWER
+  OTHER
+}
+
+enum PackageItemType {
+  PRODUCT // For items with pages, size, and quantity (e.g., Albums, Frames)
+  EVENT   // For coverage and ceremonies (e.g., Wedding Day, Pre-shoot)
+}
+
+model Package {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category    PackageCategory
+  name        String
+  description String?         @db.Text
+  basePrice   Decimal         @map("base_price") @db.Decimal(10, 2)
+  isActive    Boolean         @default(true) @map("is_active")
+  
+  // Relationships
+  items       PackageItem[]
+  
+  // Timestamps
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  deletedAt   DateTime?       @map("deleted_at")
+
+  @@map("packages")
+}
+
+model PackageItem {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  packageId      String          @map("package_id") @db.Uuid
+  name           String
+  type           PackageItemType
+  defDimensions  String?         @map("def_dimensions") // e.g., "12x18"
+  defPages       Int?            @map("def_pages")
+  defQuantity    Int?            @default(1) @map("def_quantity")
+  description    String?         @db.Text
+  
+  package        Package         @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  @@map("package_items")
+}
+
+model Client {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  email          String?  @unique
+  phone          String?
+  address        String?  @db.Text
+  internal_notes String?  @db.Text @map("internal_notes") // Private studio notes
+  
+  // Timestamps
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@map("clients")
+}

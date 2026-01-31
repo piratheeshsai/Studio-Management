@@ -94,7 +94,7 @@ const CreateRolePage = () => {
                                         type="text"
                                         value={roleName}
                                         onChange={(e) => setRoleName(e.target.value)}
-                                        placeholder="e.g. Sales Manager"
+                                        placeholder="e.g. Editor"
                                         className="w-full px-4 py-3 bg-zinc-50 dark:bg-black/20 border border-zinc-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/20 dark:focus:ring-orange-400/20 focus:border-orange-500/50 transition-all text-zinc-900 dark:text-white placeholder:text-zinc-400"
                                         required
                                     />

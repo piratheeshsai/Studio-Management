@@ -16,14 +16,22 @@ const PERMISSIONS = [
   { name: 'Read Role', slug: 'ROLE_READ' },
   { name: 'Update Role', slug: 'ROLE_UPDATE' },
   { name: 'Delete Role', slug: 'ROLE_DELETE' },
+  { name: 'Create Package', slug: 'PACKAGE_CREATE' },
+  { name: 'Read Package', slug: 'PACKAGE_READ' },
+  { name: 'Update Package', slug: 'PACKAGE_UPDATE' },
+  { name: 'Delete Package', slug: 'PACKAGE_DELETE' },
+  { name: 'Create Client', slug: 'CLIENT_CREATE' },
+  { name: 'Read Client', slug: 'CLIENT_READ' },
+  { name: 'Update Client', slug: 'CLIENT_UPDATE' },
+  { name: 'Delete Client', slug: 'CLIENT_DELETE' },
   { name: 'Manage Settings', slug: 'SETTINGS_MANAGE' },
 ];
 
 const ROLES = {
   SUPER_ADMIN: PERMISSIONS.map(p => p.slug),
-  ADMIN: ['USER_CREATE', 'USER_READ', 'USER_UPDATE'],
-  OWNER: ['USER_READ'],
-  EDITOR: [],
+  ADMIN: ['USER_CREATE', 'USER_READ', 'USER_UPDATE', 'PACKAGE_CREATE', 'PACKAGE_READ', 'PACKAGE_UPDATE', 'CLIENT_CREATE', 'CLIENT_READ', 'CLIENT_UPDATE', 'CLIENT_DELETE'],
+  OWNER: ['USER_READ', 'PACKAGE_READ'],
+  EDITOR: ['PACKAGE_READ'],
   PHOTOGRAPHER: [],
 };
 

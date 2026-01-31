@@ -9,7 +9,24 @@
 * 🟢 You can import this file directly.
 */
 
+export const PackageCategory = {
+  WEDDING: 'WEDDING',
+  BIRTHDAY: 'BIRTHDAY',
+  COMMERCIAL: 'COMMERCIAL',
+  CORPORATE: 'CORPORATE',
+  MATERNITY: 'MATERNITY',
+  PRE_WEDDING: 'PRE_WEDDING',
+  ENGAGEMENT: 'ENGAGEMENT',
+  BABY_SHOWER: 'BABY_SHOWER',
+  OTHER: 'OTHER'
+} as const
+
+export type PackageCategory = (typeof PackageCategory)[keyof typeof PackageCategory]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const PackageItemType = {
+  PRODUCT: 'PRODUCT',
+  EVENT: 'EVENT'
+} as const
+
+export type PackageItemType = (typeof PackageItemType)[keyof typeof PackageItemType]

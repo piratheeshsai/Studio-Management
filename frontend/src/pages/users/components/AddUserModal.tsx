@@ -14,14 +14,21 @@ interface AddUserModalProps {
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onSuccess }) => {
-    const { roles, loading: rolesLoading } = useRoles();
+    const { roles, loading: rolesLoading, fetchRoles } = useRoles();
+
+    React.useEffect(() => {
+        if (isOpen) {
+            fetchRoles();
+        }
+    }, [isOpen, fetchRoles]);
+
     console.log('AddUserModal: roles', roles, 'loading', rolesLoading); // DEBUG LOG
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
         role: '',
-        mustChangePassword: false
+        mustChangePassword: true
     });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
@@ -135,8 +142,10 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onSuccess 
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            navigator.clipboard.writeText(formData.password);
-                                            // optimized: could add a toast here
+                                            if (formData.password) {
+                                                navigator.clipboard.writeText(formData.password);
+                                                toast.success('Password copied to clipboard!');
+                                            }
                                         }}
                                         className="p-1.5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-lg text-zinc-500 transition-colors"
                                         title="Copy Password"

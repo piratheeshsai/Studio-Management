@@ -1,55 +1,61 @@
 import { useState } from 'react';
-import { Plus, Search, MoreVertical, Filter, Loader2, RefreshCw, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, MoreVertical, Loader2, RefreshCw, Pencil, Trash2, CheckCircle, UserX } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
 import { useUsers } from '../../../hooks/useUsers';
 import { useAuth } from '../../../context/AuthContext';
 import AddUserModal from './AddUserModal';
+import EditUserModal from './EditUserModal';
+import DeleteConfirmationDialog from '../../../components/DeleteConfirmationDialog';
+import type { User } from '../../../types/user.types';
 
-const UserManagement = () => {
-    const { hasPermission, user: currentUser } = useAuth();
-    const { users, loading, error, refetch, deactivateUser, deleteUser } = useUsers();
-    console.log('Users data:', users);
+interface UserManagementProps {
+    searchQuery: string;
+    users: User[];
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+    deactivateUser: (id: string) => Promise<void>;
+    activateUser: (id: string) => Promise<void>;
+    deleteUser: (id: string) => Promise<void>;
+    setIsAddUserModalOpen: (isOpen: boolean) => void;
+    isAddUserModalOpen: boolean;
+}
 
-    const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+const UserManagement = ({
+    searchQuery,
+    users,
+    loading,
+    error,
+    refetch,
+    deactivateUser,
+    activateUser,
+    deleteUser,
+    setIsAddUserModalOpen,
+    isAddUserModalOpen
+}: UserManagementProps) => {
+    const { user: currentUser, hasPermission } = useAuth();
+    const [userToEdit, setUserToEdit] = useState<User | null>(null);
+    const [confirmDetail, setConfirmDetail] = useState<{
+        type: 'deactivate' | 'delete' | 'activate';
+        user: User;
+        title: string;
+        description: string;
+        confirmText: string;
+    } | null>(null);
+
+    // Filter users based on search query
+    const filteredUsers = users.filter((user) => {
+        const query = searchQuery.toLowerCase().trim();
+        if (!query) return true;
+        return (
+            user.name.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query)
+        );
+    });
 
     return (
         <div className="space-y-6">
-            {/* Action Bar */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md p-4 rounded-2xl border border-zinc-200 dark:border-white/5">
-                <div className="relative flex-1 w-full sm:max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search users..."
-                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-black/20 border border-zinc-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 text-zinc-800 dark:text-zinc-200"
-                    />
-                </div>
-
-                <div className="flex gap-3 w-full sm:w-auto">
-                    <button
-                        onClick={refetch}
-                        className="p-2 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors text-zinc-700 dark:text-zinc-300"
-                        title="Refresh"
-                    >
-                        <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors text-zinc-700 dark:text-zinc-300">
-                        <Filter size={18} />
-                        <span>Filter</span>
-                    </button>
-                    {hasPermission('USER_CREATE') && (
-                        <button
-                            onClick={() => setIsAddUserModalOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl hover:opacity-90 transition-opacity shadow-lg shadow-zinc-900/20 dark:shadow-white/20"
-                        >
-                            <Plus size={18} />
-                            <span>Add User</span>
-                        </button>
-                    )}
-                </div>
-            </div>
-
             {/* Users Table / List */}
             <div className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-zinc-200 dark:border-white/5 overflow-hidden">
                 <div className="overflow-x-auto">
@@ -79,14 +85,14 @@ const UserManagement = () => {
                                         {error}
                                     </td>
                                 </tr>
-                            ) : users.length === 0 ? (
+                            ) : filteredUsers.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-12 text-center text-zinc-500">
-                                        No users found.
+                                        {searchQuery ? `No users found matching "${searchQuery}"` : 'No users found.'}
                                     </td>
                                 </tr>
                             ) : (
-                                users.map((user) => (
+                                filteredUsers.map((user) => (
                                     <tr key={user.id} className="hover:bg-zinc-50/50 dark:hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -130,7 +136,7 @@ const UserManagement = () => {
                                                     >
                                                         <DropdownMenu.Item
                                                             className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/5 outline-none cursor-pointer"
-                                                            onClick={() => toast.info(`Edit user ${user.name}`)}
+                                                            onClick={() => setUserToEdit(user)}
                                                         >
                                                             <Pencil size={14} />
                                                             Edit
@@ -139,22 +145,35 @@ const UserManagement = () => {
                                                         {hasPermission('USER_DELETE') && (
                                                             <>
                                                                 <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
-                                                                <DropdownMenu.Item
-                                                                    className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer"
-                                                                    onClick={async () => {
-                                                                        if (window.confirm(`Are you sure you want to deactivate ${user.name}? This will prevent them from logging in.`)) {
-                                                                            try {
-                                                                                await deactivateUser(user.id);
-                                                                                toast.success('User deactivated successfully');
-                                                                            } catch (error) {
-                                                                                toast.error('Failed to deactivate user');
-                                                                            }
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <Trash2 size={14} />
-                                                                    Deactivate
-                                                                </DropdownMenu.Item>
+                                                                {user.status === 'Active' ? (
+                                                                    <DropdownMenu.Item
+                                                                        className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer"
+                                                                        onClick={() => setConfirmDetail({
+                                                                            type: 'deactivate',
+                                                                            user,
+                                                                            title: 'Deactivate User',
+                                                                            description: `Are you sure you want to deactivate ${user.name}? This will prevent them from logging into the system.`,
+                                                                            confirmText: 'Deactivate'
+                                                                        })}
+                                                                    >
+                                                                        <UserX size={14} />
+                                                                        Deactivate
+                                                                    </DropdownMenu.Item>
+                                                                ) : (
+                                                                    <DropdownMenu.Item
+                                                                        className="flex items-center gap-2 px-3 py-2 text-sm text-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 outline-none cursor-pointer"
+                                                                        onClick={() => setConfirmDetail({
+                                                                            type: 'activate',
+                                                                            user,
+                                                                            title: 'Activate User',
+                                                                            description: `Are you sure you want to activate ${user.name}? They will be able to log in again.`,
+                                                                            confirmText: 'Activate'
+                                                                        })}
+                                                                    >
+                                                                        <CheckCircle size={14} />
+                                                                        Activate
+                                                                    </DropdownMenu.Item>
+                                                                )}
                                                             </>
                                                         )}
 
@@ -163,16 +182,13 @@ const UserManagement = () => {
                                                                 <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
                                                                 <DropdownMenu.Item
                                                                     className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer"
-                                                                    onClick={async () => {
-                                                                        if (window.confirm(`PERMANENT ACTION: Are you sure you want to PERMANENTLY DELETE ${user.name}? This cannot be undone.`)) {
-                                                                            try {
-                                                                                await deleteUser(user.id);
-                                                                                toast.success('User deleted permanently');
-                                                                            } catch (error) {
-                                                                                toast.error('Failed to delete user');
-                                                                            }
-                                                                        }
-                                                                    }}
+                                                                    onClick={() => setConfirmDetail({
+                                                                        type: 'delete',
+                                                                        user,
+                                                                        title: 'Delete User Permanently',
+                                                                        description: `PERMANENT ACTION: Are you sure you want to DELETE ${user.name}? This cannot be undone and all associated data will be removed.`,
+                                                                        confirmText: 'Delete Permanently'
+                                                                    })}
                                                                 >
                                                                     <Trash2 size={14} />
                                                                     Delete (Permanent)
@@ -195,6 +211,40 @@ const UserManagement = () => {
                 isOpen={isAddUserModalOpen}
                 onClose={() => setIsAddUserModalOpen(false)}
                 onSuccess={refetch}
+            />
+
+            <EditUserModal
+                isOpen={!!userToEdit}
+                user={userToEdit}
+                onClose={() => setUserToEdit(null)}
+                onSuccess={refetch}
+            />
+
+            <DeleteConfirmationDialog
+                isOpen={!!confirmDetail}
+                onClose={() => setConfirmDetail(null)}
+                onConfirm={async () => {
+                    if (!confirmDetail) return;
+
+                    try {
+                        if (confirmDetail.type === 'deactivate') {
+                            await deactivateUser(confirmDetail.user.id);
+                            toast.success('User deactivated successfully');
+                        } else if (confirmDetail.type === 'activate') {
+                            await activateUser(confirmDetail.user.id);
+                            toast.success('User activated successfully');
+                        } else {
+                            await deleteUser(confirmDetail.user.id);
+                            toast.success('User deleted permanently');
+                        }
+                    } catch (error) {
+                        toast.error(`Failed to ${confirmDetail.type} user`);
+                    }
+                }}
+                title={confirmDetail?.title || ''}
+                description={confirmDetail?.description || ''}
+                itemName={confirmDetail?.user.name}
+                confirmText={confirmDetail?.confirmText}
             />
         </div>
     );

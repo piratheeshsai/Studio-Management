@@ -9,9 +9,9 @@ import {
     BarChart3,
     UserCog,
     Settings,
-    Shield,
     ChevronRight,
-    ChevronLeft
+    ChevronLeft,
+    Package
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,6 +30,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, toggle }) => {
     const menuItems = [
         { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
         { icon: Users, label: 'Clients', path: '/clients' },
+        // Only show Packages link if user has permission
+        ...(hasPermission('PACKAGE_READ') ? [{ icon: Package, label: 'Packages', path: '/packages' }] : []),
         { icon: Camera, label: 'Shoots', path: '/shoots' },
         { icon: Image, label: 'Photos', path: '/photos' },
         { icon: BookOpen, label: 'Albums', path: '/albums' },

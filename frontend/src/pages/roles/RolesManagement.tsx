@@ -1,16 +1,23 @@
 
-import { useEffect } from 'react';
-import { Plus, Search, RefreshCw, Shield, MoreVertical, Pencil, Trash2, ShieldAlert, Briefcase, FileEdit, Eye, Zap, User, Users, Lock, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Search, RefreshCw, Shield, MoreVertical, Pencil, Trash2, ShieldAlert, Briefcase, FileEdit, Eye, Zap, User, Users, Lock } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { toast } from 'sonner';
-import { useRoles } from '../../hooks/useRoles';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import DeleteConfirmationDialog from '../../components/DeleteConfirmationDialog';
+import type { Role } from '../../types/roles.types';
 
-const RolesManagement = () => {
+interface RolesManagementProps {
+    searchQuery: string;
+    roles: Role[];
+    loading: boolean;
+    fetchRoles: () => void;
+    deleteRole: (id: string) => Promise<void>;
+}
+
+const RolesManagement = ({ searchQuery, roles, loading, fetchRoles, deleteRole }: RolesManagementProps) => {
     const navigate = useNavigate();
     const { hasPermission } = useAuth();
-    const { roles, loading, fetchRoles, deleteRole } = useRoles();
 
     const getRoleIcon = (name: string) => {
         const normalized = name.toLowerCase();
@@ -23,6 +30,7 @@ const RolesManagement = () => {
         return Shield;
     };
 
+    // Use effect to fetch roles if not passed or initial
     useEffect(() => {
         fetchRoles();
     }, [fetchRoles]);
@@ -35,42 +43,31 @@ const RolesManagement = () => {
         return 'from-zinc-500 to-zinc-700'; // Default
     };
 
+    const [roleToDelete, setRoleToDelete] = useState<{ id: string; name: string } | null>(null);
+
+    const filteredRoles = roles.filter((role) =>
+        role.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="space-y-8">
-            {/* Header / Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl p-4 rounded-2xl border border-zinc-200 dark:border-white/5 sticky top-0 z-30 shadow-sm">
-                <div className="relative flex-1 w-full sm:max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search roles..."
-                        className="w-full pl-10 pr-4 py-2 bg-white dark:bg-black/20 border border-zinc-200 dark:border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900/10 dark:focus:ring-white/10 text-zinc-800 dark:text-zinc-200 shadow-sm"
-                    />
-                </div>
-
-                <div className="flex gap-3 w-full sm:w-auto">
-                    <button
-                        onClick={fetchRoles}
-                        className="p-2 bg-white dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-xl hover:bg-zinc-50 dark:hover:bg-white/10 transition-colors text-zinc-700 dark:text-zinc-300 shadow-sm"
-                        title="Refresh"
-                    >
-                        <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
-                    </button>
-                    {hasPermission('ROLE_CREATE') && (
-                        <button
-                            onClick={() => navigate('/roles/create')}
-                            className="flex items-center gap-2 px-5 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl hover:opacity-90 transition-all shadow-lg shadow-zinc-900/20 dark:shadow-white/20 font-medium active:scale-95"
-                        >
-                            <Plus size={18} />
-                            <span>Create Role</span>
-                        </button>
-                    )}
-                </div>
-            </div>
+            <DeleteConfirmationDialog
+                isOpen={!!roleToDelete}
+                onClose={() => setRoleToDelete(null)}
+                onConfirm={async () => {
+                    if (roleToDelete) {
+                        await deleteRole(roleToDelete.id);
+                        setRoleToDelete(null);
+                    }
+                }}
+                title="Delete Role"
+                description="Are you sure you want to permanently delete this role? Users assigned to this role may lose access to certain features."
+                itemName={roleToDelete?.name}
+            />
 
             {/* Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {roles.map((role) => {
+                {filteredRoles.map((role) => {
                     const RoleIcon = getRoleIcon(role.name);
                     const userCount = role._count?.users || 0;
                     const gradient = getGradient(role.name);
@@ -87,44 +84,42 @@ const RolesManagement = () => {
                                         <RoleIcon size={24} strokeWidth={1.5} />
                                     </div>
 
-                                    <DropdownMenu.Root>
-                                        <DropdownMenu.Trigger asChild>
-                                            <button className="p-2 -mr-2 -mt-2 hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 outline-none">
-                                                <MoreVertical size={20} />
-                                            </button>
-                                        </DropdownMenu.Trigger>
-                                        <DropdownMenu.Portal>
-                                            <DropdownMenu.Content
-                                                className="min-w-[160px] bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-200 dark:border-white/10 p-1.5 z-50 animate-in fade-in-0 zoom-in-95"
-                                                align="end"
-                                            >
-                                                <DropdownMenu.Item
-                                                    className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/5 outline-none cursor-pointer transition-colors"
-                                                    onClick={() => navigate(`/roles/${role.id}/edit`)}
+                                    {role.name !== 'SUPER_ADMIN' && (
+                                        <DropdownMenu.Root>
+                                            <DropdownMenu.Trigger asChild>
+                                                <button className="p-2 -mr-2 -mt-2 hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-colors text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 outline-none">
+                                                    <MoreVertical size={20} />
+                                                </button>
+                                            </DropdownMenu.Trigger>
+                                            <DropdownMenu.Portal>
+                                                <DropdownMenu.Content
+                                                    className="min-w-[160px] bg-white dark:bg-zinc-900 rounded-xl shadow-xl border border-zinc-200 dark:border-white/10 p-1.5 z-50 animate-in fade-in-0 zoom-in-95"
+                                                    align="end"
                                                 >
-                                                    <Pencil size={16} className="text-zinc-400" />
-                                                    Edit Role
-                                                </DropdownMenu.Item>
+                                                    <DropdownMenu.Item
+                                                        className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-white/5 outline-none cursor-pointer transition-colors"
+                                                        onClick={() => navigate(`/roles/${role.id}/edit`)}
+                                                    >
+                                                        <Pencil size={16} className="text-zinc-400" />
+                                                        Edit Role
+                                                    </DropdownMenu.Item>
 
-                                                {hasPermission('ROLE_DELETE') && (
-                                                    <>
-                                                        <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
-                                                        <DropdownMenu.Item
-                                                            className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer transition-colors"
-                                                            onClick={async () => {
-                                                                if (window.confirm(`Are you sure you want to delete the ${role.name} role?`)) {
-                                                                    await deleteRole(role.id);
-                                                                }
-                                                            }}
-                                                        >
-                                                            <Trash2 size={16} />
-                                                            Delete Role
-                                                        </DropdownMenu.Item>
-                                                    </>
-                                                )}
-                                            </DropdownMenu.Content>
-                                        </DropdownMenu.Portal>
-                                    </DropdownMenu.Root>
+                                                    {hasPermission('ROLE_DELETE') && (
+                                                        <>
+                                                            <DropdownMenu.Separator className="h-px bg-zinc-100 dark:bg-white/5 my-1" />
+                                                            <DropdownMenu.Item
+                                                                className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 outline-none cursor-pointer transition-colors"
+                                                                onClick={() => setRoleToDelete(role)}
+                                                            >
+                                                                <Trash2 size={16} />
+                                                                Delete Role
+                                                            </DropdownMenu.Item>
+                                                        </>
+                                                    )}
+                                                </DropdownMenu.Content>
+                                            </DropdownMenu.Portal>
+                                        </DropdownMenu.Root>
+                                    )}
                                 </div>
 
                                 {/* Title & Stats */}

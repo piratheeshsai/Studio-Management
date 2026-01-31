@@ -168,6 +168,49 @@ export class AuthService {
     });
   }
 
+  async activateUser(userId: string) {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { status: 'Active' },
+    });
+  }
+
+  async updateUser(userId: string, data: { name?: string; email?: string; role?: string; password?: string }) {
+    // If updating email, check uniqueness
+    if (data.email) {
+        const existing = await this.prisma.user.findUnique({ where: { email: data.email } });
+        if (existing && existing.id !== userId) {
+            throw new ConflictException('Email already in use');
+        }
+    }
+
+    // Role update logic
+    let roleId: string | undefined;
+    if (data.role) {
+        const role = await this.prisma.role.findUnique({ where: { name: data.role } });
+        if (!role) throw new BadRequestException(`Role ${data.role} not found`);
+        roleId = role.id;
+    }
+
+    const updateData: any = {
+        name: data.name,
+        email: data.email,
+        roleId: roleId
+    };
+
+    if (data.password) {
+        updateData.password = await bcrypt.hash(data.password, 10);
+        updateData.mustChangePassword = true; // Force them to change it again if admin resets it? Or maybe optional.
+        // Let's set it to true as a safe default for admin resets.
+    }
+
+    return this.prisma.user.update({
+        where: { id: userId },
+        data: updateData,
+        include: { role: true }
+    });
+  }
+
   async deleteUser(userId: string) {
       const user = await this.prisma.user.findUnique({
           where: { id: userId },

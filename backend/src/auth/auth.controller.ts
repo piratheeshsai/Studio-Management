@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Param, Delete, ForbiddenException, Req } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param, Delete, ForbiddenException, Req, BadRequestException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -30,6 +30,19 @@ export class AuthController {
   @Post('users/:id/deactivate')
   async deactivateUser(@Param('id') id: string) {
     return this.authService.deactivateUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('USER_DELETE') // Reusing USER_DELETE as it's a critical action, or potentially USER_UPDATE if exists
+  async activateUser(@Param('id') id: string) {
+    return this.authService.activateUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('USER_UPDATE') // Assuming USER_UPDATE exists, or reuse USER_CREATE/DELETE
+  @Post('users/:id') // Using POST or PATCH
+  async updateUser(@Param('id') id: string, @Body() body: { name?: string; email?: string; role?: string; password?: string }) {
+      return this.authService.updateUser(id, body);
   }
 
   @UseGuards(JwtAuthGuard, PermissionsGuard)
