@@ -108,10 +108,97 @@ model Client {
   phone          String?
   address        String?  @db.Text
   internal_notes String?  @db.Text @map("internal_notes") // Private studio notes
+  shoots         Shoot[]
   
   // Timestamps
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("clients")
+}
+
+// ============================================
+// SHOOT MANAGEMENT MODELS
+// ============================================
+
+enum ShootStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum ShootItemStatus {
+  DESIGNING
+  PRINTING
+  READY
+  DELIVERED
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CHEQUE
+}
+
+model Shoot {
+  id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId    String      @map("client_id") @db.Uuid
+  category    PackageCategory
+  packageName String      @map("package_name") // Snapshot of package name
+  finalPrice  Decimal     @map("final_price") @db.Decimal(10, 2)
+  status      ShootStatus @default(PENDING)
+  
+  description String?     @db.Text
+  startDate   DateTime?   @map("start_date")
+  
+  // Relationships
+  client      Client      @relation(fields: [clientId], references: [id])
+  items       ShootItem[]
+  payments    Payment[]
+  
+  // Timestamps
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  @@map("shoots")
+}
+
+model ShootItem {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shootId        String          @map("shoot_id") @db.Uuid
+  name           String
+  type           PackageItemType
+  dimensions     String?         // Customizable
+  pages          Int?            // Customizable
+  quantity       Int             @default(1)
+  isIncluded     Boolean         @default(true) @map("is_included")
+  status         ShootItemStatus @default(DESIGNING)
+  description    String?         @db.Text
+  
+  // Relationships
+  shoot          Shoot           @relation(fields: [shootId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  @@map("shoot_items")
+}
+
+model Payment {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shootId     String        @map("shoot_id") @db.Uuid
+  amount      Decimal       @db.Decimal(10, 2)
+  method      PaymentMethod
+  date        DateTime      @default(now())
+  note        String?       @db.Text
+  
+  // Relationships
+  shoot       Shoot         @relation(fields: [shootId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  @@map("payments")
 }

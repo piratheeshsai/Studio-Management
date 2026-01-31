@@ -12,6 +12,8 @@ import CreateRolePage from './pages/roles/CreateRolePage';
 import EditRolePage from './pages/roles/EditRolePage';
 import PackagesPage from './pages/packages/PackagesPage';
 import ClientsPage from './pages/clients/ClientsPage';
+import ShootsPage from './pages/shoots/ShootsPage';
+import ShootDetailsPage from './pages/shoots/ShootDetailsPage';
 
 import { useTheme } from './context/ThemeContext';
 
@@ -20,7 +22,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <Toaster position="bottom-right" richColors style={{ zIndex: 9999 }} theme={theme === 'dark' ? 'dark' : 'light'} />
+      <Toaster position="bottom-right" richColors style={{ zIndex: 9999 }} theme="light" />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
@@ -33,6 +35,8 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/clients" element={<ClientsPage />} />
+              <Route path="/shoots" element={<ShootsPage />} />
+              <Route path="/shoots/:id" element={<ShootDetailsPage />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/packages" element={<PackagesPage />} />
               <Route path="/roles/create" element={<CreateRolePage />} />

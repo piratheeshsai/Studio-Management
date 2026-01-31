@@ -39,7 +39,6 @@ export const useClients = () => {
         try {
             const response = await apiClient.post('/clients', data);
             setClients(prev => [response.data, ...prev]);
-            toast.success('Client created successfully');
             return response.data;
         } catch (err: any) {
             const message = err.response?.data?.message || 'Failed to create client';
@@ -52,7 +51,6 @@ export const useClients = () => {
         try {
             const response = await apiClient.patch(`/clients/${id}`, data);
             setClients(prev => prev.map(client => client.id === id ? response.data : client));
-            toast.success('Client updated successfully');
             return response.data;
         } catch (err: any) {
             const message = err.response?.data?.message || 'Failed to update client';

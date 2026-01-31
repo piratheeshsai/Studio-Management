@@ -72,7 +72,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({ isOpen, onClose, onSucc
         <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-                <Dialog.Content className="fixed left-[50%] top-[50%] z-[101] w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-2xl bg-white dark:bg-zinc-900 shadow-2xl border border-zinc-200 dark:border-white/10 p-0 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out duration-200 overflow-hidden">
+                <Dialog.Content className="fixed left-[50%] top-[50%] z-[101] w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-2xl bg-white dark:bg-gradient-to-b dark:from-[#323237] dark:to-[#111112] shadow-2xl border border-zinc-200 dark:border-white/10 p-0 focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out duration-200 overflow-hidden">
 
                     {/* Header */}
                     <div className="flex items-center justify-between p-6 border-b border-zinc-100 dark:border-white/5">
@@ -154,7 +154,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({ isOpen, onClose, onSucc
                                 onChange={(e) => setFormData({ ...formData, internal_notes: e.target.value })}
                                 rows={2}
                                 className="w-full px-4 py-2.5 bg-amber-50/30 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:outline-none resize-none transition-all"
-                                placeholder="e.g. VIP client, Referred by Arun..."
+                                placeholder="e.g. VIP client, "
                             />
                         </div>
 

@@ -173,7 +173,7 @@ const ClientsPage = () => {
             </div>
 
             {/* Standard Table Container */}
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-gradient-to-b dark:from-[#323237] dark:to-[#111112] border border-zinc-200 dark:border-white/5 rounded-xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>

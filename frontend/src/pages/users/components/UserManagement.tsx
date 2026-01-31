@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Plus, Search, MoreVertical, Loader2, RefreshCw, Pencil, Trash2, CheckCircle, UserX } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { toast } from 'sonner';
-import { useUsers } from '../../../hooks/useUsers';
 import { useAuth } from '../../../context/AuthContext';
 import AddUserModal from './AddUserModal';
 import EditUserModal from './EditUserModal';
@@ -57,7 +56,7 @@ const UserManagement = ({
     return (
         <div className="space-y-6">
             {/* Users Table / List */}
-            <div className="bg-white/50 dark:bg-zinc-900/50 backdrop-blur-md rounded-2xl border border-zinc-200 dark:border-white/5 overflow-hidden">
+            <div className="bg-white/50 dark:bg-gradient-to-b dark:from-[#323237] dark:to-[#111112] backdrop-blur-md rounded-2xl border border-zinc-200 dark:border-white/5 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
                         <thead className="bg-zinc-50/50 dark:bg-white/5 border-b border-zinc-200 dark:border-white/5">

@@ -389,7 +389,10 @@ export const ModelName = {
   User: 'User',
   Package: 'Package',
   PackageItem: 'PackageItem',
-  Client: 'Client'
+  Client: 'Client',
+  Shoot: 'Shoot',
+  ShootItem: 'ShootItem',
+  Payment: 'Payment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -405,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "permission" | "role" | "user" | "package" | "packageItem" | "client"
+    modelProps: "permission" | "role" | "user" | "package" | "packageItem" | "client" | "shoot" | "shootItem" | "payment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -853,6 +856,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Shoot: {
+      payload: Prisma.$ShootPayload<ExtArgs>
+      fields: Prisma.ShootFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShootFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShootFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        findFirst: {
+          args: Prisma.ShootFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShootFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        findMany: {
+          args: Prisma.ShootFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>[]
+        }
+        create: {
+          args: Prisma.ShootCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        createMany: {
+          args: Prisma.ShootCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShootCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>[]
+        }
+        delete: {
+          args: Prisma.ShootDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        update: {
+          args: Prisma.ShootUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShootDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShootUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShootUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShootUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootPayload>
+        }
+        aggregate: {
+          args: Prisma.ShootAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShoot>
+        }
+        groupBy: {
+          args: Prisma.ShootGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShootCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootCountAggregateOutputType> | number
+        }
+      }
+    }
+    ShootItem: {
+      payload: Prisma.$ShootItemPayload<ExtArgs>
+      fields: Prisma.ShootItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShootItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShootItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        findFirst: {
+          args: Prisma.ShootItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShootItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        findMany: {
+          args: Prisma.ShootItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>[]
+        }
+        create: {
+          args: Prisma.ShootItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        createMany: {
+          args: Prisma.ShootItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShootItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>[]
+        }
+        delete: {
+          args: Prisma.ShootItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        update: {
+          args: Prisma.ShootItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShootItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShootItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShootItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShootItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemPayload>
+        }
+        aggregate: {
+          args: Prisma.ShootItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShootItem>
+        }
+        groupBy: {
+          args: Prisma.ShootItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShootItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootItemCountAggregateOutputType> | number
+        }
+      }
+    }
+    Payment: {
+      payload: Prisma.$PaymentPayload<ExtArgs>
+      fields: Prisma.PaymentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PaymentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findFirst: {
+          args: Prisma.PaymentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PaymentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        findMany: {
+          args: Prisma.PaymentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        create: {
+          args: Prisma.PaymentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        createMany: {
+          args: Prisma.PaymentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PaymentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        delete: {
+          args: Prisma.PaymentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        update: {
+          args: Prisma.PaymentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        deleteMany: {
+          args: Prisma.PaymentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PaymentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PaymentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>[]
+        }
+        upsert: {
+          args: Prisma.PaymentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentPayload>
+        }
+        aggregate: {
+          args: Prisma.PaymentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayment>
+        }
+        groupBy: {
+          args: Prisma.PaymentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PaymentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PaymentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -967,6 +1192,54 @@ export const ClientScalarFieldEnum = {
 } as const
 
 export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
+export const ShootScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  category: 'category',
+  packageName: 'packageName',
+  finalPrice: 'finalPrice',
+  status: 'status',
+  description: 'description',
+  startDate: 'startDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShootScalarFieldEnum = (typeof ShootScalarFieldEnum)[keyof typeof ShootScalarFieldEnum]
+
+
+export const ShootItemScalarFieldEnum = {
+  id: 'id',
+  shootId: 'shootId',
+  name: 'name',
+  type: 'type',
+  dimensions: 'dimensions',
+  pages: 'pages',
+  quantity: 'quantity',
+  isIncluded: 'isIncluded',
+  status: 'status',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShootItemScalarFieldEnum = (typeof ShootItemScalarFieldEnum)[keyof typeof ShootItemScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  shootId: 'shootId',
+  amount: 'amount',
+  method: 'method',
+  date: 'date',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1091,6 +1364,48 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'ShootStatus'
+ */
+export type EnumShootStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShootStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ShootStatus[]'
+ */
+export type ListEnumShootStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShootStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ShootItemStatus'
+ */
+export type EnumShootItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShootItemStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ShootItemStatus[]'
+ */
+export type ListEnumShootItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ShootItemStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentMethod'
+ */
+export type EnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentMethod[]'
+ */
+export type ListEnumPaymentMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentMethod[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1204,6 +1519,9 @@ export type GlobalOmitConfig = {
   package?: Prisma.PackageOmit
   packageItem?: Prisma.PackageItemOmit
   client?: Prisma.ClientOmit
+  shoot?: Prisma.ShootOmit
+  shootItem?: Prisma.ShootItemOmit
+  payment?: Prisma.PaymentOmit
 }
 
 /* Types for Logging */

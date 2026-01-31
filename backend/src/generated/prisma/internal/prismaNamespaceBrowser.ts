@@ -56,7 +56,10 @@ export const ModelName = {
   User: 'User',
   Package: 'Package',
   PackageItem: 'PackageItem',
-  Client: 'Client'
+  Client: 'Client',
+  Shoot: 'Shoot',
+  ShootItem: 'ShootItem',
+  Payment: 'Payment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -150,6 +153,54 @@ export const ClientScalarFieldEnum = {
 } as const
 
 export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof ClientScalarFieldEnum]
+
+
+export const ShootScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  category: 'category',
+  packageName: 'packageName',
+  finalPrice: 'finalPrice',
+  status: 'status',
+  description: 'description',
+  startDate: 'startDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShootScalarFieldEnum = (typeof ShootScalarFieldEnum)[keyof typeof ShootScalarFieldEnum]
+
+
+export const ShootItemScalarFieldEnum = {
+  id: 'id',
+  shootId: 'shootId',
+  name: 'name',
+  type: 'type',
+  dimensions: 'dimensions',
+  pages: 'pages',
+  quantity: 'quantity',
+  isIncluded: 'isIncluded',
+  status: 'status',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShootItemScalarFieldEnum = (typeof ShootItemScalarFieldEnum)[keyof typeof ShootItemScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  shootId: 'shootId',
+  amount: 'amount',
+  method: 'method',
+  date: 'date',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const SortOrder = {

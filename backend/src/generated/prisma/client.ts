@@ -67,3 +67,18 @@ export type PackageItem = Prisma.PackageItemModel
  * 
  */
 export type Client = Prisma.ClientModel
+/**
+ * Model Shoot
+ * 
+ */
+export type Shoot = Prisma.ShootModel
+/**
+ * Model ShootItem
+ * 
+ */
+export type ShootItem = Prisma.ShootItemModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel

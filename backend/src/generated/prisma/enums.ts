@@ -30,3 +30,31 @@ export const PackageItemType = {
 } as const
 
 export type PackageItemType = (typeof PackageItemType)[keyof typeof PackageItemType]
+
+
+export const ShootStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ShootStatus = (typeof ShootStatus)[keyof typeof ShootStatus]
+
+
+export const ShootItemStatus = {
+  DESIGNING: 'DESIGNING',
+  PRINTING: 'PRINTING',
+  READY: 'READY',
+  DELIVERED: 'DELIVERED'
+} as const
+
+export type ShootItemStatus = (typeof ShootItemStatus)[keyof typeof ShootItemStatus]
+
+
+export const PaymentMethod = {
+  CASH: 'CASH',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  CHEQUE: 'CHEQUE'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
