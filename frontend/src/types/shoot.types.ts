@@ -67,5 +67,6 @@ export interface CreateShootPayload {
   finalPrice: number;
   description?: string;
   startDate?: string;
+  items?: Partial<ShootItem>[];
 }
 

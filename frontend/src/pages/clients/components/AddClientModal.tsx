@@ -8,7 +8,7 @@ import type { CreateClientData } from '../../../types/client.types';
 interface AddClientModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSuccess: () => void | Promise<void>;
+    onSuccess: (client?: any) => void | Promise<void>;
 }
 
 const AddClientModal: React.FC<AddClientModalProps> = ({ isOpen, onClose, onSuccess }) => {
@@ -36,7 +36,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({ isOpen, onClose, onSucc
         const toastId = toast.loading('Adding client...');
 
         try {
-            await createClient({
+            const newClient = await createClient({
                 ...formData,
                 email: formData.email || undefined,
                 phone: formData.phone || undefined,
@@ -45,7 +45,7 @@ const AddClientModal: React.FC<AddClientModalProps> = ({ isOpen, onClose, onSucc
             });
             toast.success('Client added successfully!', { id: toastId });
             setFormData({ name: '', email: '', phone: '', address: '', internal_notes: '' });
-            onSuccess();
+            onSuccess(newClient);
             onClose();
         } catch (err: any) {
             const msg = err.response?.data?.message || 'Failed to add client';

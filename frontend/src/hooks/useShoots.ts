@@ -45,12 +45,36 @@ export const useShoots = () => {
         }
     };
 
+    const updateShootItem = async (itemId: string, data: any) => {
+        try {
+            const { data: updated } = await api.patch(`/shoots/items/${itemId}`, data);
+            toast.success('Item updated');
+            return updated;
+        } catch (err: any) {
+            toast.error('Failed to update item');
+            throw err;
+        }
+    };
+
+    const addPayment = async (shootId: string, data: any) => {
+        try {
+            const { data: payment } = await api.post(`/shoots/${shootId}/payments`, data);
+            toast.success('Payment recorded');
+            return payment;
+        } catch (err: any) {
+            toast.error('Failed to add payment');
+            throw err;
+        }
+    };
+
     return {
         shoots,
         loading,
         error,
         fetchShoots,
         createShoot,
-        getShoot
+        getShoot,
+        updateShootItem,
+        addPayment
     };
 };

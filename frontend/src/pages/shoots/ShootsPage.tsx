@@ -1,17 +1,14 @@
 
 import React, { useState } from 'react';
-import { Plus, Search, Filter, Calendar, Package, LayoutList, LayoutGrid, Kanban } from 'lucide-react';
+import { Plus, Search, Filter, Calendar, Package, LayoutList, LayoutGrid, Kanban, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-// Placeholder for API hooks
-import CreateShootModal from './components/CreateShootModal';
-
+import CreateShootWizard from './components/CreateShootWizard';
 import { useShoots } from '../../hooks/useShoots';
 
 const ShootsPage = () => {
     const { shoots, loading, fetchShoots } = useShoots();
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('All Shoots');
     const [viewMode, setViewMode] = useState<'list' | 'grid' | 'kanban'>('list');
     const navigate = useNavigate();
@@ -77,7 +74,7 @@ const ShootsPage = () => {
                         </button>
 
                         <button
-                            onClick={() => setIsCreateModalOpen(true)}
+                            onClick={() => setActiveTab('New Shoot')}
                             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black text-xs font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg active:scale-[0.98] whitespace-nowrap"
                         >
                             <Plus size={16} />
@@ -88,9 +85,9 @@ const ShootsPage = () => {
             </div>
 
             {/* Tabs (Secondary Row) */}
-            <div className="flex p-1 bg-zinc-100/50 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl w-fit border border-zinc-200/50 dark:border-white/5 h-fit">
-                {['All Shoots', 'Calendar', 'Reports'].map((tab) => {
-                    const icon = tab === 'All Shoots' ? Package : tab === 'Calendar' ? Calendar : Filter;
+            <div className="flex items-center gap-2 w-fit">
+                {['All Shoots', 'New Shoot', 'Calendar', 'Reports'].map((tab) => {
+                    const icon = tab === 'All Shoots' ? Package : tab === 'New Shoot' ? Sparkles : tab === 'Calendar' ? Calendar : Filter;
                     return (
                         <button
                             key={tab}
@@ -255,16 +252,18 @@ const ShootsPage = () => {
                                 </div>
                             </div>
                         )}
+
+                        {activeTab === 'New Shoot' && (
+                            <CreateShootWizard
+                                onSuccess={() => {
+                                    fetchShoots();
+                                    setActiveTab('All Shoots');
+                                }}
+                            />
+                        )}
                     </motion.div>
                 </AnimatePresence>
             </div>
-
-            {/* Create Modal component */}
-            <CreateShootModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-                onSuccess={() => fetchShoots()}
-            />
         </div>
     );
 };

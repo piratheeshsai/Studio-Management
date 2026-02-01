@@ -31,16 +31,27 @@ export class ShootsService {
           startDate: data.startDate ? new Date(data.startDate) : null,
           status: ShootStatus.PENDING,
           items: {
-            create: pkg.items.map((item) => ({
-              name: item.name,
-              type: item.type,
-              dimensions: item.defDimensions,
-              pages: item.defPages,
-              quantity: item.defQuantity || 1,
-              isIncluded: true,
-              status: ShootItemStatus.DESIGNING,
-              description: item.description,
-            })),
+            create: (data.items && data.items.length > 0) 
+              ? data.items.map((item) => ({
+                  name: item.name,
+                  type: item.type,
+                  dimensions: item.dimensions,
+                  pages: item.pages,
+                  quantity: item.quantity || 1,
+                  isIncluded: item.isIncluded !== undefined ? item.isIncluded : true,
+                  status: ShootItemStatus.DESIGNING,
+                  description: item.description,
+                }))
+              : pkg.items.map((item) => ({
+                  name: item.name,
+                  type: item.type,
+                  dimensions: item.defDimensions,
+                  pages: item.defPages,
+                  quantity: item.defQuantity || 1,
+                  isIncluded: true,
+                  status: ShootItemStatus.DESIGNING,
+                  description: item.description,
+                })),
           },
         },
         include: { items: true },

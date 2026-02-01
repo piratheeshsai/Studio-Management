@@ -8,23 +8,32 @@ import { motion } from 'framer-motion';
 
 import { useShoots } from '../../hooks/useShoots';
 import { useEffect } from 'react';
+import EditShootItemModal from './components/EditShootItemModal';
+import AddPaymentModal from './components/AddPaymentModal';
 
 const ShootDetailsPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'items' | 'payments'>('items');
 
-    const { getShoot } = useShoots();
+    const { getShoot, updateShootItem, addPayment } = useShoots();
     const [shoot, setShoot] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
+    const [editingItem, setEditingItem] = useState<any>(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+    const refreshShoot = () => {
         if (id) {
             getShoot(id).then(data => {
                 setShoot(data);
                 setIsLoading(false);
             }).catch(() => setIsLoading(false));
         }
+    };
+
+    useEffect(() => {
+        refreshShoot();
     }, [id]);
 
     if (isLoading) return <div className="p-6 text-center text-zinc-500">Loading...</div>;
@@ -118,7 +127,10 @@ const ShootDetailsPage = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button className="text-zinc-400 hover:text-orange-500 transition-colors p-2">
+                                            <button
+                                                onClick={() => setEditingItem(item)}
+                                                className="text-zinc-400 hover:text-orange-500 transition-colors p-2"
+                                            >
                                                 <FileEdit size={16} />
                                             </button>
                                         </td>
@@ -131,7 +143,10 @@ const ShootDetailsPage = () => {
             ) : (
                 <div className="space-y-4">
                     <div className="flex justify-end">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                        <button
+                            onClick={() => setShowPaymentModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-black rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                        >
                             <Plus size={16} />
                             Record Payment
                         </button>
@@ -179,6 +194,26 @@ const ShootDetailsPage = () => {
                     </div>
                 </div>
             )}
+            {/* Modals */}
+            <EditShootItemModal
+                isOpen={!!editingItem}
+                onClose={() => setEditingItem(null)}
+                item={editingItem}
+                onSave={async (data) => {
+                    await updateShootItem(editingItem.id, data);
+                    refreshShoot();
+                }}
+            />
+
+            <AddPaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)}
+                balanceDue={balance}
+                onSave={async (data) => {
+                    await addPayment(shoot.id, data);
+                    refreshShoot();
+                }}
+            />
         </div>
     );
 };
