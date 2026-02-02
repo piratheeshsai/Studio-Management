@@ -1,19 +1,51 @@
+
 import React, { useState, useEffect } from 'react';
-import { User, Package, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown } from 'lucide-react';
+import { User, Package, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePackages } from '../../../hooks/usePackages';
 import { useClients } from '../../../hooks/useClients';
 import { useShoots } from '../../../hooks/useShoots';
 import AddClientModal from '../../clients/components/AddClientModal';
+import AdvancePaymentModal from './AdvancePaymentModal'; // New import
+
+// Define types for clarity, assuming they are not globally defined
+interface Client {
+    id: string;
+    name: string;
+    email: string;
+    // Add other client properties as needed
+}
+
+interface Package {
+    id: string;
+    name: string;
+    category: string;
+    basePrice: number;
+    description?: string;
+    items?: any[]; // Define more specifically if possible
+    // Add other package properties as needed
+}
+
+interface ShootItem {
+    name: string;
+    type: 'PRODUCT' | 'SERVICE';
+    dimensions?: string;
+    pages?: number | string;
+    quantity?: number | string;
+    description?: string;
+    isIncluded: boolean;
+    isCustom?: boolean;
+}
 
 interface CreateShootWizardProps {
     onSuccess?: () => void;
+    onClose?: () => void; // Added onClose prop for the wizard itself
 }
 
-const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
+const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClose }) => {
     const { clients, loading: clientsLoading } = useClients();
     const { packages, loading: packagesLoading, fetchPackages } = usePackages();
-    const { createShoot, shoots, fetchShoots } = useShoots();
+    const { createShoot, shoots, fetchShoots, addPayment } = useShoots(); // Destructure addPayment
 
     useEffect(() => {
         fetchPackages();
@@ -23,14 +55,20 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Selection State
-    const [selectedClient, setSelectedClient] = useState<any>(null);
-    const [selectedPackage, setSelectedPackage] = useState<any>(null);
+    const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+    const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
     const [finalPrice, setFinalPrice] = useState<number>(0);
     const [searchClient, setSearchClient] = useState('');
     const [searchPackage, setSearchPackage] = useState('');
     const [showAddClientModal, setShowAddClientModal] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+
+    // New state for payment modal
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [createdShootId, setCreatedShootId] = useState<string | null>(null);
+
+    const [shootItems, setShootItems] = useState<ShootItem[]>([]); // Use defined ShootItem type
 
     // Filter Packages
     const filteredPackages = React.useMemo(() => {
@@ -47,7 +85,6 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
         const hasActiveFilter = searchPackage.trim() !== '' || selectedCategory !== 'All';
         return hasActiveFilter ? filtered : filtered.slice(0, 3);
     }, [packages, searchPackage, selectedCategory]);
-    const [shootItems, setShootItems] = useState<any[]>([]);
 
     // Determine Recently Used Packages
     const recentPackages = React.useMemo(() => {
@@ -96,23 +133,44 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
         }
     }, [selectedPackage]);
 
-    const handleSubmit = async () => {
+    // Abstracted reset logic
+    const resetWizard = () => {
+        setSelectedClient(null);
+        setSelectedPackage(null);
+        setFinalPrice(0);
+        setSearchClient('');
+        setSearchPackage('');
+        setSelectedCategory('All');
+        setShootItems([]);
+    };
+
+    const handleCreateShoot = async () => { // Renamed from handleSubmit
         if (!selectedClient || !selectedPackage) return;
 
         setIsSubmitting(true);
         try {
-            await createShoot({
+            const payload = {
                 clientId: selectedClient.id,
                 packageId: selectedPackage.id,
                 finalPrice: finalPrice,
                 description: `Shoot for ${selectedPackage.name}`,
                 startDate: new Date().toISOString(),
-                items: shootItems
-            });
-            onSuccess?.();
-            // Reset
-            setSelectedClient(null);
-            setSelectedPackage(null);
+                items: shootItems.filter(i => i.isIncluded).map(item => ({ // Filter only included items
+                    name: item.name,
+                    type: item.type,
+                    quantity: item.quantity === '' ? 0 : Number(item.quantity || 0),
+                    pages: item.pages === '' ? 0 : Number(item.pages || 0),
+                    dimensions: item.dimensions,
+                    // price: 0 // Optional, backend handles or we can add
+                }))
+            };
+
+            const response = await createShoot(payload); // Capture response
+
+            // Open Payment Modal instead of closing immediately
+            setCreatedShootId(response.id);
+            setShowPaymentModal(true);
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -120,26 +178,80 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
         }
     };
 
-    const toggleItem = (index: number) => {
-        const newItems = [...shootItems];
-        newItems[index].isIncluded = !newItems[index].isIncluded;
-        setShootItems(newItems);
+    const handleFinalSuccess = () => {
+        setShowPaymentModal(false);
+        setCreatedShootId(null);
+        resetWizard(); // Use abstracted reset logic
+        onSuccess?.();
+        onClose?.(); // Call onClose prop if provided
     };
 
-    const updateItemPages = (index: number, pages: number) => {
-        const newItems = [...shootItems];
-        if (newItems[index].pages !== undefined) {
-            newItems[index].pages = pages;
-        } else {
-            newItems[index].quantity = pages;
+    const handlePaymentConfirm = async (paymentData: any) => {
+        if (!createdShootId) return;
+        try {
+            await addPayment(createdShootId, paymentData);
+            handleFinalSuccess();
+        } catch (error) {
+            console.error("Error adding payment:", error);
+            // Optionally, keep the modal open or show an error message in the modal
         }
-        setShootItems(newItems);
+    };
+
+    const toggleItem = (index: number) => {
+        setShootItems(prev => {
+            const newItems = [...prev];
+            newItems[index] = { ...newItems[index], isIncluded: !newItems[index].isIncluded };
+            return newItems;
+        });
+    };
+
+    const updateItemPages = (index: number, val: any) => {
+        setShootItems(prev => {
+            const newItems = [...prev];
+            const newItem = { ...newItems[index] };
+            if (newItem.pages !== undefined) {
+                newItem.pages = val;
+            } else {
+                newItem.quantity = val;
+            }
+            newItems[index] = newItem;
+            return newItems;
+        });
     };
 
     const updateItemDimensions = (index: number, dimensions: string) => {
-        const newItems = [...shootItems];
-        newItems[index].dimensions = dimensions;
-        setShootItems(newItems);
+        setShootItems(prev => {
+            const newItems = [...prev];
+            newItems[index] = { ...newItems[index], dimensions: dimensions };
+            return newItems;
+        });
+    };
+
+    const updateItemName = (index: number, name: string) => {
+        setShootItems(prev => {
+            const newItems = [...prev];
+            newItems[index] = { ...newItems[index], name: name };
+            return newItems;
+        });
+    };
+
+    const deleteItem = (index: number) => {
+        setShootItems(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const addCustomItem = (type: 'PRODUCT' | 'SERVICE') => { // Use defined type
+        setShootItems(prev => [
+            ...prev,
+            {
+                name: type === 'PRODUCT' ? 'New Product' : 'New Service',
+                type: type,
+                isIncluded: true,
+                pages: type === 'PRODUCT' ? 0 : undefined,
+                quantity: type === 'PRODUCT' ? 1 : undefined,
+                dimensions: type === 'PRODUCT' ? '' : undefined,
+                isCustom: true
+            }
+        ]);
     };
 
     const filteredClients = Array.isArray(clients) ? clients.filter(c => c.name.toLowerCase().includes(searchClient.toLowerCase())) : [];
@@ -306,7 +418,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
 
                                     <div className="mt-auto flex items-end justify-between">
                                         <div className="text-2xl font-bold text-zinc-900 dark:text-white tracking-tight">
-                                            ${Number(pkg.basePrice).toLocaleString()}
+                                            LKR {Number(pkg.basePrice).toLocaleString()}
                                         </div>
 
                                         {selectedPackage?.id === pkg.id && (
@@ -364,7 +476,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
 
                     {/* Editable Deliverables */}
                     <div>
-                        <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider mb-3">Editable Deliverables</div>
+                        <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider mb-3">Products</div>
                         <div className="space-y-4">
                             {shootItems.filter(i => (i.type || '').toUpperCase() === 'PRODUCT').map((item, index) => {
                                 const realIndex = shootItems.indexOf(item);
@@ -372,20 +484,40 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
                                     <div key={index} className="space-y-0">
                                         {/* Header Row */}
                                         <div className="flex items-center justify-between py-2">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-[#1c1c1c] flex items-center justify-center text-orange-600 dark:text-orange-500 border border-transparent dark:border-white/5">
-                                                    {item.name.toLowerCase().includes('photo') ? <Image size={16} /> :
-                                                        item.name.toLowerCase().includes('album') ? <LayoutTemplate size={16} /> :
-                                                            <Package size={16} />}
+                                            <div className="flex items-center gap-2.5">
+                                                <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-[#1c1c1c] flex items-center justify-center text-orange-600 dark:text-orange-500 border border-transparent dark:border-white/5">
+                                                    {item.name.toLowerCase().includes('photo') ? <Image size={12} /> :
+                                                        item.name.toLowerCase().includes('album') ? <LayoutTemplate size={12} /> :
+                                                            <Package size={12} />}
                                                 </div>
-                                                <span className="font-bold text-zinc-900 dark:text-white text-sm">{item.name}</span>
+                                                {item.isCustom ? (
+                                                    <input
+                                                        type="text"
+                                                        value={item.name}
+                                                        onChange={(e) => updateItemName(realIndex, e.target.value)}
+                                                        className="font-bold text-zinc-900 dark:text-white text-xs bg-transparent outline-none w-full border-b border-zinc-200 dark:border-zinc-800 focus:border-orange-500 pb-0.5"
+                                                        autoFocus
+                                                    />
+                                                ) : (
+                                                    <span className="font-bold text-zinc-900 dark:text-white text-xs">{item.name}</span>
+                                                )}
                                             </div>
-                                            {/* Toggle */}
-                                            <div
-                                                onClick={() => toggleItem(realIndex)}
-                                                className={`w-11 h-6 rounded-full p-0.5 cursor-pointer transition-colors duration-300 relative ${item.isIncluded ? 'bg-[#FF4D00]' : 'bg-zinc-200 dark:bg-zinc-800'}`}
-                                            >
-                                                <div className={`w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300 ${item.isIncluded ? 'translate-x-5' : 'translate-x-0'}`} />
+                                            {/* Toggle & Delete */}
+                                            <div className="flex items-center gap-2">
+                                                {item.isCustom && (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); deleteItem(realIndex); }}
+                                                        className="w-4 h-4 flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors"
+                                                    >
+                                                        <X size={12} />
+                                                    </button>
+                                                )}
+                                                <div
+                                                    onClick={() => toggleItem(realIndex)}
+                                                    className={`w-8 h-4 rounded-full p-0.5 cursor-pointer transition-colors duration-300 relative ${item.isIncluded ? 'bg-[#FF4D00]' : 'bg-zinc-200 dark:bg-zinc-800'}`}
+                                                >
+                                                    <div className={`w-3 h-3 rounded-full bg-white shadow-md transition-all duration-300 ${item.isIncluded ? 'translate-x-4' : 'translate-x-0'}`} />
+                                                </div>
                                             </div>
                                         </div>
 
@@ -398,42 +530,47 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
                                                     exit={{ height: 0, opacity: 0 }}
                                                     className="overflow-hidden"
                                                 >
-                                                    <div className="mb-2 h-8 bg-zinc-100 dark:bg-[#111] border border-zinc-200 dark:border-white/5 rounded-lg flex items-center justify-between px-1">
-                                                        <div className="flex flex-1 items-center justify-center gap-2 px-1">
+                                                    <div className="mb-0.5 h-5 bg-zinc-100 dark:bg-[#111] border border-zinc-200 dark:border-white/5 rounded-md flex items-center justify-between px-1">
+                                                        <div className="flex flex-1 items-center justify-center gap-1 px-0.5">
                                                             <button
-                                                                onClick={() => updateItemPages(realIndex, Math.max(0, (item.pages || item.quantity || 0) - 1))}
-                                                                className="w-5 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                                                onClick={() => updateItemPages(realIndex, Math.max(0, (Number(item.pages) || Number(item.quantity) || 0) - 1))}
+                                                                className="w-4 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                                                             >
-                                                                <Minus size={12} />
+                                                                <Minus size={10} />
                                                             </button>
                                                             <input
                                                                 type="text"
-                                                                value={item.pages || item.quantity || 0}
+                                                                value={item.pages ?? item.quantity ?? ''}
                                                                 onChange={(e) => {
-                                                                    const val = parseInt(e.target.value);
-                                                                    updateItemPages(realIndex, isNaN(val) ? 0 : val);
+                                                                    const val = e.target.value;
+                                                                    if (val === '') {
+                                                                        updateItemPages(realIndex, '');
+                                                                    } else {
+                                                                        const num = parseInt(val);
+                                                                        if (!isNaN(num)) updateItemPages(realIndex, num);
+                                                                    }
                                                                 }}
-                                                                className="w-8 bg-transparent text-center font-bold text-zinc-900 dark:text-white font-mono text-xs outline-none p-0 appearance-none"
+                                                                className="w-6 bg-transparent text-center font-bold text-zinc-900 dark:text-white font-mono text-[10px] outline-none p-0 appearance-none"
                                                             />
                                                             <button
-                                                                onClick={() => updateItemPages(realIndex, (item.pages || item.quantity || 0) + 1)}
-                                                                className="w-5 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                                                                onClick={() => updateItemPages(realIndex, (Number(item.pages) || Number(item.quantity) || 0) + 1)}
+                                                                className="w-4 h-full flex items-center justify-center text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                                                             >
-                                                                <Plus size={12} />
+                                                                <Plus size={10} />
                                                             </button>
                                                         </div>
 
                                                         {/* Dimension Input (with divider) */}
-                                                        {item.dimensions && (
+                                                        {(item.dimensions !== undefined) && (
                                                             <>
-                                                                <div className="w-px h-4 bg-zinc-300 dark:bg-zinc-800 mx-1" />
-                                                                <div className="px-2 flex items-center gap-2 h-full">
-                                                                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider">SIZE</span>
+                                                                <div className="w-px h-3 bg-zinc-300 dark:bg-zinc-800 mx-0.5" />
+                                                                <div className="px-1 flex items-center gap-1 h-full">
+                                                                    <span className="text-[7px] text-zinc-400 font-bold uppercase tracking-wider">SIZE</span>
                                                                     <input
                                                                         type="text"
-                                                                        value={item.dimensions}
+                                                                        value={item.dimensions ?? ''}
                                                                         onChange={(e) => updateItemDimensions(realIndex, e.target.value)}
-                                                                        className="w-12 bg-transparent text-right text-xs font-bold text-zinc-900 dark:text-white outline-none placeholder:text-zinc-600 focus:text-orange-500 transition-colors"
+                                                                        className="w-10 bg-transparent text-right text-[10px] font-bold text-zinc-900 dark:text-white outline-none placeholder:text-zinc-600 focus:text-orange-500 transition-colors"
                                                                         placeholder="Size"
                                                                     />
                                                                 </div>
@@ -447,47 +584,60 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
                                 );
                             })}
                         </div>
+                        <button onClick={() => addCustomItem('PRODUCT')} className="w-full py-2 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg flex items-center justify-center gap-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all text-[10px] font-bold mt-2">
+                            <Plus size={12} /> Add Product
+                        </button>
                     </div>
 
                     {/* Additional Services */}
                     <div>
-                        <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider mb-3">Additional Services</div>
+                        <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider mb-3">Events</div>
                         <div className="space-y-3">
                             {shootItems.filter(i => (i.type || '').toUpperCase() !== 'PRODUCT').map((item, index) => {
                                 const realIndex = shootItems.indexOf(item);
                                 return (
                                     <div key={index} className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 dark:text-zinc-400">
-                                                {item.name.toLowerCase().includes('ai') ? <Wand2 size={14} /> : <Check size={14} />}
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 dark:text-zinc-400">
+                                                {item.name.toLowerCase().includes('ai') ? <Wand2 size={12} /> : <Check size={12} />}
                                             </div>
-                                            <span className="font-bold text-zinc-900 dark:text-white text-xs">{item.name}</span>
+                                            {item.isCustom ? (
+                                                <input
+                                                    type="text"
+                                                    value={item.name}
+                                                    onChange={(e) => updateItemName(realIndex, e.target.value)}
+                                                    className="font-bold text-zinc-900 dark:text-white text-[10px] bg-transparent outline-none w-full border-b border-zinc-200 dark:border-zinc-800 focus:border-orange-500 pb-0.5"
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                <span className="font-bold text-zinc-900 dark:text-white text-[10px]">{item.name}</span>
+                                            )}
                                         </div>
-                                        <div
-                                            onClick={() => toggleItem(realIndex)}
-                                            className={`w-10 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 relative ${item.isIncluded ? 'bg-[#FF4D00]' : 'bg-zinc-200 dark:bg-zinc-800'}`}
-                                        >
-                                            <div className={`w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${item.isIncluded ? 'translate-x-4' : 'translate-x-0'}`} />
+                                        <div className="flex items-center gap-2">
+                                            {item.isCustom && (
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); deleteItem(realIndex); }}
+                                                    className="w-4 h-4 flex items-center justify-center text-zinc-400 hover:text-red-500 transition-colors"
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            )}
+                                            <div
+                                                onClick={() => toggleItem(realIndex)}
+                                                className={`w-8 h-4 rounded-full p-0.5 cursor-pointer transition-colors duration-300 relative ${item.isIncluded ? 'bg-[#FF4D00]' : 'bg-zinc-200 dark:bg-zinc-800'}`}
+                                            >
+                                                <div className={`w-3 h-3 rounded-full bg-white shadow-md transition-all duration-300 ${item.isIncluded ? 'translate-x-4' : 'translate-x-0'}`} />
+                                            </div>
                                         </div>
                                     </div>
                                 );
                             })}
 
-                            {/* Static Placeholder for Demo if empty */}
-                            {shootItems.filter(i => (i.type || '').toUpperCase() !== 'PRODUCT').length === 0 && (
-                                <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 flex items-center justify-between opacity-60">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400">
-                                            <Wand2 size={14} />
-                                        </div>
-                                        <span className="font-bold text-zinc-500 text-xs">AI Culling</span>
-                                    </div>
-                                    <div className="w-10 h-6 rounded-full bg-zinc-200 dark:bg-zinc-800 p-1 relative">
-                                        <div className="w-4 h-4 rounded-full bg-white shadow-sm" />
-                                    </div>
-                                </div>
-                            )}
+
                         </div>
+                        <button onClick={() => addCustomItem('SERVICE')} className="w-full py-2 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg flex items-center justify-center gap-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all text-[10px] font-bold mt-2">
+                            <Plus size={12} /> Add Event
+                        </button>
                     </div>
                 </div>
 
@@ -496,17 +646,29 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
                     <div className="flex justify-between items-end mb-4">
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Total Agreed Price</span>
-                            <span className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">${finalPrice.toLocaleString()}</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">LKR</span>
+                                <input
+                                    type="text"
+                                    value={finalPrice || ''}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '');
+                                        setFinalPrice(val === '' ? 0 : parseInt(val));
+                                    }}
+                                    className="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight bg-transparent outline-none w-40 placeholder:text-zinc-300"
+                                    placeholder="0"
+                                />
+                            </div>
                         </div>
                         {finalPrice < (selectedPackage ? Number(selectedPackage.basePrice) : 0) && (
-                            <div className="text-[10px] font-bold text-green-500 bg-green-50 dark:bg-green-500/10 px-2 py-0.5 rounded-full mb-1">
-                                SAVING ${((selectedPackage ? Number(selectedPackage.basePrice) : 0) - finalPrice).toLocaleString()}
+                            <div className="text-[10px] font-bold text-green-500 mb-1">
+                                Reduced LKR {((selectedPackage ? Number(selectedPackage.basePrice) : 0) - finalPrice).toLocaleString()}
                             </div>
                         )}
                     </div>
 
                     <button
-                        onClick={handleSubmit}
+                        onClick={handleCreateShoot} // Updated to handleCreateShoot
                         disabled={!selectedClient || !selectedPackage || isSubmitting}
                         className="w-full py-3 bg-[#FF4D00] hover:bg-[#ff5e1a] text-white rounded-xl font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_4px_15px_-4px_rgba(255,77,0,0.4)] hover:shadow-[0_8px_20px_-4px_rgba(255,77,0,0.5)] active:scale-[0.98] flex items-center justify-center gap-2"
                     >
@@ -525,8 +687,17 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess }) => {
                     }
                 }}
             />
+
+            {/* Advance Payment Modal */}
+            <AdvancePaymentModal
+                isOpen={showPaymentModal}
+                onClose={handleFinalSuccess} // If they close via X, we treat as skip/done
+                onConfirm={handlePaymentConfirm}
+                totalAmount={finalPrice}
+            />
         </div>
     );
 };
 
 export default CreateShootWizard;
+
