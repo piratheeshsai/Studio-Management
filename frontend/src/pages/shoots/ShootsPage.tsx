@@ -6,8 +6,10 @@ import { useNavigate } from 'react-router-dom';
 
 import CreateShootWizard from './components/CreateShootWizard';
 import { useShoots } from '../../hooks/useShoots';
+import { useAuth } from '../../context/AuthContext';
 
 const ShootsPage = () => {
+    const { hasPermission } = useAuth();
     const { shoots, loading, fetchShoots } = useShoots();
     const [activeTab, setActiveTab] = useState('All Shoots');
     const [viewMode, setViewMode] = useState<'list' | 'grid' | 'kanban'>('list');
@@ -73,44 +75,48 @@ const ShootsPage = () => {
                             <Filter size={16} />
                         </button>
 
-                        <button
-                            onClick={() => setActiveTab('New Shoot')}
-                            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black text-xs font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg active:scale-[0.98] whitespace-nowrap"
-                        >
-                            <Plus size={16} />
-                            New Shoot
-                        </button>
+                        {hasPermission('SHOOT_CREATE') && (
+                            <button
+                                onClick={() => setActiveTab('New Shoot')}
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black text-xs font-semibold rounded-xl hover:opacity-90 transition-all shadow-lg active:scale-[0.98] whitespace-nowrap"
+                            >
+                                <Plus size={16} />
+                                New Shoot
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* Tabs (Secondary Row) */}
-            <div className="flex items-center gap-2 w-fit">
-                {['All Shoots', 'New Shoot', 'Calendar', 'Reports'].map((tab) => {
-                    const icon = tab === 'All Shoots' ? Package : tab === 'New Shoot' ? Sparkles : tab === 'Calendar' ? Calendar : Filter;
-                    return (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`
+            <div className="flex p-1 bg-zinc-100/50 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl w-fit border border-zinc-200/50 dark:border-white/5 h-fit">
+                {['All Shoots', 'New Shoot', 'Calendar', 'Reports']
+                    .filter(tab => tab !== 'New Shoot' || hasPermission('SHOOT_CREATE')) // Filter out New Shoot tab from bottom nav too if no permission
+                    .map((tab) => {
+                        const icon = tab === 'All Shoots' ? Package : tab === 'New Shoot' ? Sparkles : tab === 'Calendar' ? Calendar : Filter;
+                        return (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`
                                 relative flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-medium transition-all duration-300 outline-none
                                 ${activeTab === tab ? 'text-white shadow-md' : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'}
                             `}
-                        >
-                            {activeTab === tab && (
-                                <motion.div
-                                    layoutId="active-tab"
-                                    className="absolute inset-0 bg-zinc-900 dark:bg-white rounded-xl"
-                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                />
-                            )}
-                            <span className={`relative z-10 flex items-center gap-1.5 ${activeTab === tab ? 'text-white dark:text-black' : ''}`}>
-                                {React.createElement(icon, { size: 16 })}
-                                {tab}
-                            </span>
-                        </button>
-                    );
-                })}
+                            >
+                                {activeTab === tab && (
+                                    <motion.div
+                                        layoutId="active-tab"
+                                        className="absolute inset-0 bg-zinc-900 dark:bg-white rounded-xl"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                                <span className={`relative z-10 flex items-center gap-1.5 ${activeTab === tab ? 'text-white dark:text-black' : ''}`}>
+                                    {React.createElement(icon, { size: 16 })}
+                                    {tab}
+                                </span>
+                            </button>
+                        );
+                    })}
             </div>
 
             {/* Content Area */}

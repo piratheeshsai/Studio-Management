@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, Package, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X } from 'lucide-react';
+import { User, Package, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePackages } from '../../../hooks/usePackages';
 import { useClients } from '../../../hooks/useClients';
 import { useShoots } from '../../../hooks/useShoots';
 import AddClientModal from '../../clients/components/AddClientModal';
 import AdvancePaymentModal from './AdvancePaymentModal'; // New import
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 // Define types for clarity, assuming they are not globally defined
 interface Client {
@@ -28,7 +30,7 @@ interface Package {
 
 interface ShootItem {
     name: string;
-    type: 'PRODUCT' | 'SERVICE';
+    type: 'PRODUCT' | 'EVENT';
     dimensions?: string;
     pages?: number | string;
     quantity?: number | string;
@@ -67,6 +69,9 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
     // New state for payment modal
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [createdShootId, setCreatedShootId] = useState<string | null>(null);
+
+    // Shoot date
+    const [shootDate, setShootDate] = useState<string>('');
 
     const [shootItems, setShootItems] = useState<ShootItem[]>([]); // Use defined ShootItem type
 
@@ -142,6 +147,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
         setSearchPackage('');
         setSelectedCategory('All');
         setShootItems([]);
+        setShootDate('');
     };
 
     const handleCreateShoot = async () => { // Renamed from handleSubmit
@@ -154,7 +160,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                 packageId: selectedPackage.id,
                 finalPrice: finalPrice,
                 description: `Shoot for ${selectedPackage.name}`,
-                startDate: new Date().toISOString(),
+                startDate: shootDate ? new Date(shootDate).toISOString() : new Date().toISOString(),
                 items: shootItems.filter(i => i.isIncluded).map(item => ({ // Filter only included items
                     name: item.name,
                     type: item.type,
@@ -239,11 +245,11 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
         setShootItems(prev => prev.filter((_, i) => i !== index));
     };
 
-    const addCustomItem = (type: 'PRODUCT' | 'SERVICE') => { // Use defined type
+    const addCustomItem = (type: 'PRODUCT' | 'EVENT') => { // Use defined type
         setShootItems(prev => [
             ...prev,
             {
-                name: type === 'PRODUCT' ? 'New Product' : 'New Service',
+                name: type === 'PRODUCT' ? 'New Product' : 'New Event',
                 type: type,
                 isIncluded: true,
                 pages: type === 'PRODUCT' ? 0 : undefined,
@@ -452,6 +458,81 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-5 space-y-6">
 
+                    {/* Shoot Date */}
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider shrink-0">Event Date</div>
+                        <div className="relative group w-[130px]">
+                            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10" size={14} />
+
+                            <style>{`
+                                .react-datepicker-wrapper { width: 100%; }
+                                .react-datepicker {
+                                    font-family: inherit;
+                                    border: 1px solid #e4e4e7;
+                                    border-radius: 0.75rem;
+                                    overflow: hidden;
+                                    background-color: #fff;
+                                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                                }
+                                .dark .react-datepicker {
+                                    border-color: #27272a;
+                                    background-color: #18181b;
+                                }
+                                .react-datepicker__header {
+                                    background-color: #fff;
+                                    border-bottom: 1px solid #f4f4f5;
+                                    padding-top: 1rem;
+                                }
+                                .dark .react-datepicker__header {
+                                    background-color: #18181b;
+                                    border-color: #27272a;
+                                }
+                                .react-datepicker__current-month {
+                                    font-weight: 700;
+                                    color: #18181b;
+                                    margin-bottom: 0.5rem;
+                                }
+                                .dark .react-datepicker__current-month { color: #fff; }
+                                .react-datepicker__day-name { color: #a1a1aa; }
+                                .react-datepicker__day {
+                                    color: #3f3f46;
+                                    border-radius: 0.375rem;
+                                    margin: 0.166rem;
+                                }
+                                .dark .react-datepicker__day { color: #e4e4e7; }
+                                .react-datepicker__day:hover {
+                                    background-color: #f4f4f5;
+                                    color: #000;
+                                }
+                                .dark .react-datepicker__day:hover {
+                                    background-color: #27272a;
+                                    color: #fff;
+                                }
+                                .react-datepicker__day--selected, .react-datepicker__day--keyboard-selected {
+                                    background-color: #f97316 !important;
+                                    color: #fff !important;
+                                }
+                                .react-datepicker__triangle { display: none; }
+                                .react-datepicker__navigation-icon::before {
+                                    border-color: #a1a1aa;
+                                }
+                            `}</style>
+
+                            <DatePicker
+                                selected={shootDate ? new Date(shootDate) : null}
+                                onChange={(date: Date | null) => setShootDate(date ? date.toISOString() : '')}
+                                placeholderText="Select event date"
+                                className="w-full pl-9 pr-3 !py-1.5 !h-[34px] bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl !text-[11px] font-medium text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500/50 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 cursor-pointer placeholder:text-zinc-400"
+                                dateFormat="MMMM d, yyyy"
+                                minDate={new Date()}
+                                wrapperClassName="w-full"
+                                popperPlacement="bottom-start"
+                                showPopperArrow={false}
+                            />
+                        </div>
+
+                    </div>
+
                     {/* Selected Client */}
                     <div>
                         <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider mb-2">Selected Client</div>
@@ -635,7 +716,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
 
 
                         </div>
-                        <button onClick={() => addCustomItem('SERVICE')} className="w-full py-2 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg flex items-center justify-center gap-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all text-[10px] font-bold mt-2">
+                        <button onClick={() => addCustomItem('EVENT')} className="w-full py-2 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg flex items-center justify-center gap-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all text-[10px] font-bold mt-2">
                             <Plus size={12} /> Add Event
                         </button>
                     </div>
@@ -695,7 +776,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                 onConfirm={handlePaymentConfirm}
                 totalAmount={finalPrice}
             />
-        </div>
+        </div >
     );
 };
 

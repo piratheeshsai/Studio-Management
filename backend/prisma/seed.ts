@@ -25,14 +25,16 @@ const PERMISSIONS = [
   { name: 'Update Client', slug: 'CLIENT_UPDATE' },
   { name: 'Delete Client', slug: 'CLIENT_DELETE' },
   { name: 'Manage Settings', slug: 'SETTINGS_MANAGE' },
+  { name: 'Create Shoot', slug: 'SHOOT_CREATE' },
+  { name: 'Read Shoot', slug: 'SHOOT_READ' },
+  { name: 'Update Shoot', slug: 'SHOOT_UPDATE' },
+  { name: 'Delete Shoot', slug: 'SHOOT_DELETE' },
 ];
 
+// Only seed SUPER_ADMIN role - other roles will be created via UI
+// SUPER_ADMIN has empty permissions array since permission checks are bypassed in code
 const ROLES = {
-  SUPER_ADMIN: PERMISSIONS.map(p => p.slug),
-  ADMIN: ['USER_CREATE', 'USER_READ', 'USER_UPDATE', 'PACKAGE_CREATE', 'PACKAGE_READ', 'PACKAGE_UPDATE', 'CLIENT_CREATE', 'CLIENT_READ', 'CLIENT_UPDATE', 'CLIENT_DELETE'],
-  OWNER: ['USER_READ', 'PACKAGE_READ', 'CLIENT_CREATE', 'CLIENT_READ', 'CLIENT_UPDATE', 'CLIENT_DELETE'],
-  EDITOR: ['PACKAGE_READ'],
-  PHOTOGRAPHER: [],
+  SUPER_ADMIN: [],
 };
 
 async function main() {

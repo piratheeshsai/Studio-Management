@@ -97,7 +97,7 @@ const UsersPage = () => {
             </div>
 
             {/* Tabs (Secondary Row) */}
-            <div className="flex p-1 bg-zinc-100/50 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl w-fit border border-zinc-200/50 dark:border-white/5 h-fit">
+            <div className="flex items-center gap-2 w-fit">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
