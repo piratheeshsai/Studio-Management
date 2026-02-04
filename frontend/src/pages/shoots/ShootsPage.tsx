@@ -200,30 +200,32 @@ const ShootsPage = () => {
                                                     initial={{ opacity: 0, y: 20 }}
                                                     animate={{ opacity: 1, y: 0 }}
                                                     onClick={() => navigate(`/shoots/${shoot.id}`)}
-                                                    className="group relative overflow-hidden rounded-[2.5rem] bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800/50 p-4 md:p-6 cursor-pointer transition-all hover:border-orange-200 dark:hover:border-zinc-700 hover:shadow-xl hover:shadow-orange-500/5 dark:hover:shadow-orange-900/10"
+                                                    className="group relative overflow-hidden rounded-[2rem] bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800/50 p-3 md:p-5 cursor-pointer transition-all hover:border-orange-200 dark:hover:border-zinc-700 hover:shadow-xl hover:shadow-orange-500/5 dark:hover:shadow-orange-900/10"
                                                 >
-                                                    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+                                                    <div className="flex flex-col md:flex-row items-center gap-3 md:gap-5">
 
                                                         {/* Left: Outline ID */}
-                                                        <div className="shrink-0 relative">
-                                                            <span
-                                                                className="text-5xl md:text-6xl font-black tracking-tighter text-transparent select-none transition-colors duration-300 group-hover:stroke-orange-400"
-                                                                style={{ WebkitTextStroke: '1px #3f3f46' }} // Zinc-600 outline initially
-                                                            >
-                                                                {shootCode}
-                                                                <style>{`
-                                                                    .group:hover span[style*="text-stroke"] {
-                                                                        -webkit-text-stroke-color: #f97316; /* Orange-500 on hover */
-                                                                    }
-                                                                `}</style>
-                                                            </span>
-                                                            <div className="absolute top-1/2 -left-4 w-20 h-20 bg-orange-500/20 blur-[50px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                                        <div className="shrink-0 relative self-center w-16 md:w-20">
+                                                            <div className="flex items-center justify-center">
+                                                                <span
+                                                                    className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-transparent select-none transition-colors duration-300 stroke-zinc-200 dark:stroke-zinc-700 group-hover:stroke-orange-500"
+                                                                    style={{ WebkitTextStroke: '1px #3f3f46' }} // Zinc-600 outline initially
+                                                                >
+                                                                    {shootCode}
+                                                                    <style>{`
+                                                                        .group:hover span[style*="text-stroke"] {
+                                                                            -webkit-text-stroke-color: #f97316; /* Orange-500 on hover */
+                                                                        }
+                                                                    `}</style>
+                                                                </span>
+                                                            </div>
+                                                            <div className="absolute top-1/2 -left-4 w-20 h-20 bg-orange-500/10 dark:bg-orange-500/20 blur-[50px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                         </div>
 
                                                         {/* Center: Title & Progress */}
                                                         <div className="flex-1 min-w-0 w-full">
-                                                            <div className="mb-4">
-                                                                <h3 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white uppercase tracking-tight mb-1 truncate">
+                                                            <div className="mb-3">
+                                                                <h3 className="text-lg md:text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight mb-1 truncate">
                                                                     {shoot.client?.name || "Client Name"}
                                                                 </h3>
                                                                 <div className="text-[10px] font-bold text-orange-600 dark:text-orange-500 tracking-[0.2em] uppercase">
@@ -246,11 +248,11 @@ const ShootsPage = () => {
                                                         </div>
 
                                                         {/* Right: Status & Details */}
-                                                        <div className="flex flex-row md:flex-col items-center md:items-end gap-4 md:gap-6 w-full md:w-auto mt-3 md:mt-0 justify-between md:justify-center">
+                                                        <div className="flex flex-row md:flex-col items-center md:items-end gap-3 md:gap-4 w-full md:w-48 shrink-0 mt-2 md:mt-0 justify-between md:justify-center">
 
                                                             {/* Status Pill */}
                                                             <div className={`
-                                                                px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-sm
+                                                                px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-sm
                                                                 ${shoot.status === 'COMPLETED' ? 'bg-green-100 dark:bg-green-500/10 border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-500' :
                                                                     shoot.status === 'SCHEDULED' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-500 border-orange-200 dark:border-orange-500/20 shadow-orange-500/10' :
                                                                         'bg-zinc-100 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400'}
