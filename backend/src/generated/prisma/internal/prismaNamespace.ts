@@ -1202,7 +1202,7 @@ export const ShootScalarFieldEnum = {
   finalPrice: 'finalPrice',
   status: 'status',
   description: 'description',
-  startDate: 'startDate',
+  eventDate: 'eventDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

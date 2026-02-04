@@ -59,7 +59,7 @@ export class CreateShootDto {
   description?: string;
   
   @IsOptional()
-  startDate?: string; // ISO Date string
+  eventDate?: string; // ISO Date string
 
   @IsOptional()
   @IsArray()

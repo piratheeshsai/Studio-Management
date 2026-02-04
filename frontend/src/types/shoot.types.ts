@@ -51,7 +51,7 @@ export interface Shoot {
   packageName: string;
   finalPrice: number;
   description?: string;
-  startDate?: string;
+  eventDate?: string;
   status: ShootStatus;
   items: ShootItem[];
   payments: Payment[];
@@ -66,7 +66,7 @@ export interface CreateShootPayload {
   packageId: string;
   finalPrice: number;
   description?: string;
-  startDate?: string;
+  eventDate?: string;
   items?: Partial<ShootItem>[];
 }
 

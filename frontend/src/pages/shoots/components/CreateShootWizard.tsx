@@ -70,8 +70,8 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [createdShootId, setCreatedShootId] = useState<string | null>(null);
 
-    // Shoot date
-    const [shootDate, setShootDate] = useState<string>('');
+    // Event date
+    const [eventDate, setEventDate] = useState<string>('');
 
     const [shootItems, setShootItems] = useState<ShootItem[]>([]); // Use defined ShootItem type
 
@@ -147,7 +147,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
         setSearchPackage('');
         setSelectedCategory('All');
         setShootItems([]);
-        setShootDate('');
+        setEventDate('');
     };
 
     const handleCreateShoot = async () => { // Renamed from handleSubmit
@@ -160,7 +160,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                 packageId: selectedPackage.id,
                 finalPrice: finalPrice,
                 description: `Shoot for ${selectedPackage.name}`,
-                startDate: shootDate ? new Date(shootDate).toISOString() : new Date().toISOString(),
+                eventDate: eventDate ? new Date(eventDate).toISOString() : new Date().toISOString(),
                 items: shootItems.filter(i => i.isIncluded).map(item => ({ // Filter only included items
                     name: item.name,
                     type: item.type,
@@ -519,10 +519,10 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                             `}</style>
 
                             <DatePicker
-                                selected={shootDate ? new Date(shootDate) : null}
-                                onChange={(date: Date | null) => setShootDate(date ? date.toISOString() : '')}
+                                selected={eventDate ? new Date(eventDate) : null}
+                                onChange={(date: Date | null) => setEventDate(date ? date.toISOString() : '')}
                                 placeholderText="Select event date"
-                                className="w-full pl-9 pr-3 !py-1.5 !h-[34px] bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl !text-[11px] font-medium text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500/50 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 cursor-pointer placeholder:text-zinc-400"
+                                className="w-full pl-9 pr-3 !py-0.5 !h-[26px] bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl !text-[11px] font-medium text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500/50 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 cursor-pointer placeholder:text-zinc-400"
                                 dateFormat="MMMM d, yyyy"
                                 minDate={new Date()}
                                 wrapperClassName="w-full"

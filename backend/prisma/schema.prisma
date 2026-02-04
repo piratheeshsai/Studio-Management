@@ -149,7 +149,7 @@ model Shoot {
   status      ShootStatus @default(PENDING)
   
   description String?     @db.Text
-  startDate   DateTime?   @map("start_date")
+  eventDate   DateTime?   @map("event_date")
   
   // Relationships
   client      Client      @relation(fields: [clientId], references: [id])

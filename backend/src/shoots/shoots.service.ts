@@ -28,7 +28,7 @@ export class ShootsService {
           packageName: pkg.name,
           finalPrice: data.finalPrice,
           description: data.description,
-          startDate: data.startDate ? new Date(data.startDate) : null,
+          eventDate: data.eventDate ? new Date(data.eventDate) : null,
           status: ShootStatus.PENDING,
           items: {
             create: (data.items && data.items.length > 0) 

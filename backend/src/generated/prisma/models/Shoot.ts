@@ -42,7 +42,7 @@ export type ShootMinAggregateOutputType = {
   finalPrice: runtime.Decimal | null
   status: $Enums.ShootStatus | null
   description: string | null
-  startDate: Date | null
+  eventDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -55,7 +55,7 @@ export type ShootMaxAggregateOutputType = {
   finalPrice: runtime.Decimal | null
   status: $Enums.ShootStatus | null
   description: string | null
-  startDate: Date | null
+  eventDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,7 +68,7 @@ export type ShootCountAggregateOutputType = {
   finalPrice: number
   status: number
   description: number
-  startDate: number
+  eventDate: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -91,7 +91,7 @@ export type ShootMinAggregateInputType = {
   finalPrice?: true
   status?: true
   description?: true
-  startDate?: true
+  eventDate?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -104,7 +104,7 @@ export type ShootMaxAggregateInputType = {
   finalPrice?: true
   status?: true
   description?: true
-  startDate?: true
+  eventDate?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -117,7 +117,7 @@ export type ShootCountAggregateInputType = {
   finalPrice?: true
   status?: true
   description?: true
-  startDate?: true
+  eventDate?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -217,7 +217,7 @@ export type ShootGroupByOutputType = {
   finalPrice: runtime.Decimal
   status: $Enums.ShootStatus
   description: string | null
-  startDate: Date | null
+  eventDate: Date | null
   createdAt: Date
   updatedAt: Date
   _count: ShootCountAggregateOutputType | null
@@ -253,7 +253,7 @@ export type ShootWhereInput = {
   finalPrice?: Prisma.DecimalFilter<"Shoot"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFilter<"Shoot"> | $Enums.ShootStatus
   description?: Prisma.StringNullableFilter<"Shoot"> | string | null
-  startDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
@@ -269,7 +269,7 @@ export type ShootOrderByWithRelationInput = {
   finalPrice?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   client?: Prisma.ClientOrderByWithRelationInput
@@ -288,7 +288,7 @@ export type ShootWhereUniqueInput = Prisma.AtLeast<{
   finalPrice?: Prisma.DecimalFilter<"Shoot"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFilter<"Shoot"> | $Enums.ShootStatus
   description?: Prisma.StringNullableFilter<"Shoot"> | string | null
-  startDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
@@ -304,7 +304,7 @@ export type ShootOrderByWithAggregationInput = {
   finalPrice?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
-  startDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ShootCountOrderByAggregateInput
@@ -325,7 +325,7 @@ export type ShootScalarWhereWithAggregatesInput = {
   finalPrice?: Prisma.DecimalWithAggregatesFilter<"Shoot"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusWithAggregatesFilter<"Shoot"> | $Enums.ShootStatus
   description?: Prisma.StringNullableWithAggregatesFilter<"Shoot"> | string | null
-  startDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Shoot"> | Date | string | null
+  eventDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Shoot"> | Date | string
 }
@@ -337,7 +337,7 @@ export type ShootCreateInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
@@ -353,7 +353,7 @@ export type ShootUncheckedCreateInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
@@ -367,7 +367,7 @@ export type ShootUpdateInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
@@ -383,7 +383,7 @@ export type ShootUncheckedUpdateInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
@@ -398,7 +398,7 @@ export type ShootCreateManyInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -410,7 +410,7 @@ export type ShootUpdateManyMutationInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -423,7 +423,7 @@ export type ShootUncheckedUpdateManyInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -446,7 +446,7 @@ export type ShootCountOrderByAggregateInput = {
   finalPrice?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  startDate?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -463,7 +463,7 @@ export type ShootMaxOrderByAggregateInput = {
   finalPrice?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  startDate?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -476,7 +476,7 @@ export type ShootMinOrderByAggregateInput = {
   finalPrice?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  startDate?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -571,7 +571,7 @@ export type ShootCreateWithoutClientInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ShootItemCreateNestedManyWithoutShootInput
@@ -585,7 +585,7 @@ export type ShootUncheckedCreateWithoutClientInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
@@ -629,7 +629,7 @@ export type ShootScalarWhereInput = {
   finalPrice?: Prisma.DecimalFilter<"Shoot"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFilter<"Shoot"> | $Enums.ShootStatus
   description?: Prisma.StringNullableFilter<"Shoot"> | string | null
-  startDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
 }
@@ -641,7 +641,7 @@ export type ShootCreateWithoutItemsInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
@@ -656,7 +656,7 @@ export type ShootUncheckedCreateWithoutItemsInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutShootInput
@@ -685,7 +685,7 @@ export type ShootUpdateWithoutItemsInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
@@ -700,7 +700,7 @@ export type ShootUncheckedUpdateWithoutItemsInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutShootNestedInput
@@ -713,7 +713,7 @@ export type ShootCreateWithoutPaymentsInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
@@ -728,7 +728,7 @@ export type ShootUncheckedCreateWithoutPaymentsInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
@@ -757,7 +757,7 @@ export type ShootUpdateWithoutPaymentsInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
@@ -772,7 +772,7 @@ export type ShootUncheckedUpdateWithoutPaymentsInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
@@ -785,7 +785,7 @@ export type ShootCreateManyClientInput = {
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.ShootStatus
   description?: string | null
-  startDate?: Date | string | null
+  eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -797,7 +797,7 @@ export type ShootUpdateWithoutClientInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ShootItemUpdateManyWithoutShootNestedInput
@@ -811,7 +811,7 @@ export type ShootUncheckedUpdateWithoutClientInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
@@ -825,7 +825,7 @@ export type ShootUncheckedUpdateManyWithoutClientInput = {
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumShootStatusFieldUpdateOperationsInput | $Enums.ShootStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -878,7 +878,7 @@ export type ShootSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   finalPrice?: boolean
   status?: boolean
   description?: boolean
-  startDate?: boolean
+  eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
@@ -895,7 +895,7 @@ export type ShootSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   finalPrice?: boolean
   status?: boolean
   description?: boolean
-  startDate?: boolean
+  eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
@@ -909,7 +909,7 @@ export type ShootSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   finalPrice?: boolean
   status?: boolean
   description?: boolean
-  startDate?: boolean
+  eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
@@ -923,12 +923,12 @@ export type ShootSelectScalar = {
   finalPrice?: boolean
   status?: boolean
   description?: boolean
-  startDate?: boolean
+  eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ShootOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "category" | "packageName" | "finalPrice" | "status" | "description" | "startDate" | "createdAt" | "updatedAt", ExtArgs["result"]["shoot"]>
+export type ShootOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "category" | "packageName" | "finalPrice" | "status" | "description" | "eventDate" | "createdAt" | "updatedAt", ExtArgs["result"]["shoot"]>
 export type ShootInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Shoot$itemsArgs<ExtArgs>
@@ -957,7 +957,7 @@ export type $ShootPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     finalPrice: runtime.Decimal
     status: $Enums.ShootStatus
     description: string | null
-    startDate: Date | null
+    eventDate: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["shoot"]>
@@ -1393,7 +1393,7 @@ export interface ShootFieldRefs {
   readonly finalPrice: Prisma.FieldRef<"Shoot", 'Decimal'>
   readonly status: Prisma.FieldRef<"Shoot", 'ShootStatus'>
   readonly description: Prisma.FieldRef<"Shoot", 'String'>
-  readonly startDate: Prisma.FieldRef<"Shoot", 'DateTime'>
+  readonly eventDate: Prisma.FieldRef<"Shoot", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Shoot", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Shoot", 'DateTime'>
 }
