@@ -33,6 +33,11 @@ export type Role = Prisma.RoleModel
  */
 export type User = Prisma.UserModel
 /**
+ * Model StudioSettings
+ * 
+ */
+export type StudioSettings = Prisma.StudioSettingsModel
+/**
  * Model Package
  * 
  */
@@ -62,3 +67,8 @@ export type ShootItem = Prisma.ShootItemModel
  * 
  */
 export type Payment = Prisma.PaymentModel
+/**
+ * Model ShootItemAssignment
+ * 
+ */
+export type ShootItemAssignment = Prisma.ShootItemAssignmentModel

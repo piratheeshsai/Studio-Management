@@ -43,4 +43,9 @@ export class ShootsController {
   ) {
     return this.shootsService.addPayment(id, body);
   }
+
+  @Delete(':id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.shootsService.remove(id);
+  }
 }

@@ -36,6 +36,7 @@ export type ShootSumAggregateOutputType = {
 
 export type ShootMinAggregateOutputType = {
   id: string | null
+  shootCode: string | null
   clientId: string | null
   category: $Enums.PackageCategory | null
   packageName: string | null
@@ -45,10 +46,12 @@ export type ShootMinAggregateOutputType = {
   eventDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ShootMaxAggregateOutputType = {
   id: string | null
+  shootCode: string | null
   clientId: string | null
   category: $Enums.PackageCategory | null
   packageName: string | null
@@ -58,10 +61,12 @@ export type ShootMaxAggregateOutputType = {
   eventDate: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ShootCountAggregateOutputType = {
   id: number
+  shootCode: number
   clientId: number
   category: number
   packageName: number
@@ -71,6 +76,7 @@ export type ShootCountAggregateOutputType = {
   eventDate: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -85,6 +91,7 @@ export type ShootSumAggregateInputType = {
 
 export type ShootMinAggregateInputType = {
   id?: true
+  shootCode?: true
   clientId?: true
   category?: true
   packageName?: true
@@ -94,10 +101,12 @@ export type ShootMinAggregateInputType = {
   eventDate?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type ShootMaxAggregateInputType = {
   id?: true
+  shootCode?: true
   clientId?: true
   category?: true
   packageName?: true
@@ -107,10 +116,12 @@ export type ShootMaxAggregateInputType = {
   eventDate?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type ShootCountAggregateInputType = {
   id?: true
+  shootCode?: true
   clientId?: true
   category?: true
   packageName?: true
@@ -120,6 +131,7 @@ export type ShootCountAggregateInputType = {
   eventDate?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -211,6 +223,7 @@ export type ShootGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type ShootGroupByOutputType = {
   id: string
+  shootCode: string
   clientId: string
   category: $Enums.PackageCategory
   packageName: string
@@ -220,6 +233,7 @@ export type ShootGroupByOutputType = {
   eventDate: Date | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: ShootCountAggregateOutputType | null
   _avg: ShootAvgAggregateOutputType | null
   _sum: ShootSumAggregateOutputType | null
@@ -247,6 +261,7 @@ export type ShootWhereInput = {
   OR?: Prisma.ShootWhereInput[]
   NOT?: Prisma.ShootWhereInput | Prisma.ShootWhereInput[]
   id?: Prisma.UuidFilter<"Shoot"> | string
+  shootCode?: Prisma.StringFilter<"Shoot"> | string
   clientId?: Prisma.UuidFilter<"Shoot"> | string
   category?: Prisma.EnumPackageCategoryFilter<"Shoot"> | $Enums.PackageCategory
   packageName?: Prisma.StringFilter<"Shoot"> | string
@@ -256,6 +271,7 @@ export type ShootWhereInput = {
   eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   items?: Prisma.ShootItemListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -263,6 +279,7 @@ export type ShootWhereInput = {
 
 export type ShootOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  shootCode?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   packageName?: Prisma.SortOrder
@@ -272,6 +289,7 @@ export type ShootOrderByWithRelationInput = {
   eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   client?: Prisma.ClientOrderByWithRelationInput
   items?: Prisma.ShootItemOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
@@ -279,6 +297,7 @@ export type ShootOrderByWithRelationInput = {
 
 export type ShootWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  shootCode?: string
   AND?: Prisma.ShootWhereInput | Prisma.ShootWhereInput[]
   OR?: Prisma.ShootWhereInput[]
   NOT?: Prisma.ShootWhereInput | Prisma.ShootWhereInput[]
@@ -291,13 +310,15 @@ export type ShootWhereUniqueInput = Prisma.AtLeast<{
   eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   client?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
   items?: Prisma.ShootItemListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
-}, "id">
+}, "id" | "shootCode">
 
 export type ShootOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  shootCode?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   packageName?: Prisma.SortOrder
@@ -307,6 +328,7 @@ export type ShootOrderByWithAggregationInput = {
   eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ShootCountOrderByAggregateInput
   _avg?: Prisma.ShootAvgOrderByAggregateInput
   _max?: Prisma.ShootMaxOrderByAggregateInput
@@ -319,6 +341,7 @@ export type ShootScalarWhereWithAggregatesInput = {
   OR?: Prisma.ShootScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ShootScalarWhereWithAggregatesInput | Prisma.ShootScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Shoot"> | string
+  shootCode?: Prisma.StringWithAggregatesFilter<"Shoot"> | string
   clientId?: Prisma.UuidWithAggregatesFilter<"Shoot"> | string
   category?: Prisma.EnumPackageCategoryWithAggregatesFilter<"Shoot"> | $Enums.PackageCategory
   packageName?: Prisma.StringWithAggregatesFilter<"Shoot"> | string
@@ -328,10 +351,12 @@ export type ShootScalarWhereWithAggregatesInput = {
   eventDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Shoot"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Shoot"> | Date | string | null
 }
 
 export type ShootCreateInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -340,6 +365,7 @@ export type ShootCreateInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
   items?: Prisma.ShootItemCreateNestedManyWithoutShootInput
   payments?: Prisma.PaymentCreateNestedManyWithoutShootInput
@@ -347,6 +373,7 @@ export type ShootCreateInput = {
 
 export type ShootUncheckedCreateInput = {
   id?: string
+  shootCode: string
   clientId: string
   category: $Enums.PackageCategory
   packageName: string
@@ -356,12 +383,14 @@ export type ShootUncheckedCreateInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutShootInput
 }
 
 export type ShootUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -370,6 +399,7 @@ export type ShootUpdateInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
   items?: Prisma.ShootItemUpdateManyWithoutShootNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutShootNestedInput
@@ -377,6 +407,7 @@ export type ShootUpdateInput = {
 
 export type ShootUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -386,12 +417,14 @@ export type ShootUncheckedUpdateInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutShootNestedInput
 }
 
 export type ShootCreateManyInput = {
   id?: string
+  shootCode: string
   clientId: string
   category: $Enums.PackageCategory
   packageName: string
@@ -401,10 +434,12 @@ export type ShootCreateManyInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ShootUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -413,10 +448,12 @@ export type ShootUpdateManyMutationInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ShootUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -426,6 +463,7 @@ export type ShootUncheckedUpdateManyInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ShootListRelationFilter = {
@@ -440,6 +478,7 @@ export type ShootOrderByRelationAggregateInput = {
 
 export type ShootCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  shootCode?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   packageName?: Prisma.SortOrder
@@ -449,6 +488,7 @@ export type ShootCountOrderByAggregateInput = {
   eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ShootAvgOrderByAggregateInput = {
@@ -457,6 +497,7 @@ export type ShootAvgOrderByAggregateInput = {
 
 export type ShootMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  shootCode?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   packageName?: Prisma.SortOrder
@@ -466,10 +507,12 @@ export type ShootMaxOrderByAggregateInput = {
   eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ShootMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  shootCode?: Prisma.SortOrder
   clientId?: Prisma.SortOrder
   category?: Prisma.SortOrder
   packageName?: Prisma.SortOrder
@@ -479,6 +522,7 @@ export type ShootMinOrderByAggregateInput = {
   eventDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ShootSumOrderByAggregateInput = {
@@ -566,6 +610,7 @@ export type ShootUpdateOneRequiredWithoutPaymentsNestedInput = {
 
 export type ShootCreateWithoutClientInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -574,12 +619,14 @@ export type ShootCreateWithoutClientInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ShootItemCreateNestedManyWithoutShootInput
   payments?: Prisma.PaymentCreateNestedManyWithoutShootInput
 }
 
 export type ShootUncheckedCreateWithoutClientInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -588,6 +635,7 @@ export type ShootUncheckedCreateWithoutClientInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutShootInput
 }
@@ -623,6 +671,7 @@ export type ShootScalarWhereInput = {
   OR?: Prisma.ShootScalarWhereInput[]
   NOT?: Prisma.ShootScalarWhereInput | Prisma.ShootScalarWhereInput[]
   id?: Prisma.UuidFilter<"Shoot"> | string
+  shootCode?: Prisma.StringFilter<"Shoot"> | string
   clientId?: Prisma.UuidFilter<"Shoot"> | string
   category?: Prisma.EnumPackageCategoryFilter<"Shoot"> | $Enums.PackageCategory
   packageName?: Prisma.StringFilter<"Shoot"> | string
@@ -632,10 +681,12 @@ export type ShootScalarWhereInput = {
   eventDate?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Shoot"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Shoot"> | Date | string | null
 }
 
 export type ShootCreateWithoutItemsInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -644,12 +695,14 @@ export type ShootCreateWithoutItemsInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
   payments?: Prisma.PaymentCreateNestedManyWithoutShootInput
 }
 
 export type ShootUncheckedCreateWithoutItemsInput = {
   id?: string
+  shootCode: string
   clientId: string
   category: $Enums.PackageCategory
   packageName: string
@@ -659,6 +712,7 @@ export type ShootUncheckedCreateWithoutItemsInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutShootInput
 }
 
@@ -680,6 +734,7 @@ export type ShootUpdateToOneWithWhereWithoutItemsInput = {
 
 export type ShootUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -688,12 +743,14 @@ export type ShootUpdateWithoutItemsInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutShootNestedInput
 }
 
 export type ShootUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -703,11 +760,13 @@ export type ShootUncheckedUpdateWithoutItemsInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutShootNestedInput
 }
 
 export type ShootCreateWithoutPaymentsInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -716,12 +775,14 @@ export type ShootCreateWithoutPaymentsInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   client: Prisma.ClientCreateNestedOneWithoutShootsInput
   items?: Prisma.ShootItemCreateNestedManyWithoutShootInput
 }
 
 export type ShootUncheckedCreateWithoutPaymentsInput = {
   id?: string
+  shootCode: string
   clientId: string
   category: $Enums.PackageCategory
   packageName: string
@@ -731,6 +792,7 @@ export type ShootUncheckedCreateWithoutPaymentsInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   items?: Prisma.ShootItemUncheckedCreateNestedManyWithoutShootInput
 }
 
@@ -752,6 +814,7 @@ export type ShootUpdateToOneWithWhereWithoutPaymentsInput = {
 
 export type ShootUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -760,12 +823,14 @@ export type ShootUpdateWithoutPaymentsInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   client?: Prisma.ClientUpdateOneRequiredWithoutShootsNestedInput
   items?: Prisma.ShootItemUpdateManyWithoutShootNestedInput
 }
 
 export type ShootUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   clientId?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -775,11 +840,13 @@ export type ShootUncheckedUpdateWithoutPaymentsInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
 }
 
 export type ShootCreateManyClientInput = {
   id?: string
+  shootCode: string
   category: $Enums.PackageCategory
   packageName: string
   finalPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -788,10 +855,12 @@ export type ShootCreateManyClientInput = {
   eventDate?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ShootUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -800,12 +869,14 @@ export type ShootUpdateWithoutClientInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ShootItemUpdateManyWithoutShootNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutShootNestedInput
 }
 
 export type ShootUncheckedUpdateWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -814,12 +885,14 @@ export type ShootUncheckedUpdateWithoutClientInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   items?: Prisma.ShootItemUncheckedUpdateManyWithoutShootNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutShootNestedInput
 }
 
 export type ShootUncheckedUpdateManyWithoutClientInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootCode?: Prisma.StringFieldUpdateOperationsInput | string
   category?: Prisma.EnumPackageCategoryFieldUpdateOperationsInput | $Enums.PackageCategory
   packageName?: Prisma.StringFieldUpdateOperationsInput | string
   finalPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -828,6 +901,7 @@ export type ShootUncheckedUpdateManyWithoutClientInput = {
   eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -872,6 +946,7 @@ export type ShootCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.
 
 export type ShootSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  shootCode?: boolean
   clientId?: boolean
   category?: boolean
   packageName?: boolean
@@ -881,6 +956,7 @@ export type ShootSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Shoot$itemsArgs<ExtArgs>
   payments?: boolean | Prisma.Shoot$paymentsArgs<ExtArgs>
@@ -889,6 +965,7 @@ export type ShootSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type ShootSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  shootCode?: boolean
   clientId?: boolean
   category?: boolean
   packageName?: boolean
@@ -898,11 +975,13 @@ export type ShootSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoot"]>
 
 export type ShootSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  shootCode?: boolean
   clientId?: boolean
   category?: boolean
   packageName?: boolean
@@ -912,11 +991,13 @@ export type ShootSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shoot"]>
 
 export type ShootSelectScalar = {
   id?: boolean
+  shootCode?: boolean
   clientId?: boolean
   category?: boolean
   packageName?: boolean
@@ -926,9 +1007,10 @@ export type ShootSelectScalar = {
   eventDate?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type ShootOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clientId" | "category" | "packageName" | "finalPrice" | "status" | "description" | "eventDate" | "createdAt" | "updatedAt", ExtArgs["result"]["shoot"]>
+export type ShootOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shootCode" | "clientId" | "category" | "packageName" | "finalPrice" | "status" | "description" | "eventDate" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["shoot"]>
 export type ShootInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   client?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
   items?: boolean | Prisma.Shoot$itemsArgs<ExtArgs>
@@ -951,6 +1033,7 @@ export type $ShootPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    shootCode: string
     clientId: string
     category: $Enums.PackageCategory
     packageName: string
@@ -960,6 +1043,7 @@ export type $ShootPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     eventDate: Date | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["shoot"]>
   composites: {}
 }
@@ -1387,6 +1471,7 @@ export interface Prisma__ShootClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface ShootFieldRefs {
   readonly id: Prisma.FieldRef<"Shoot", 'String'>
+  readonly shootCode: Prisma.FieldRef<"Shoot", 'String'>
   readonly clientId: Prisma.FieldRef<"Shoot", 'String'>
   readonly category: Prisma.FieldRef<"Shoot", 'PackageCategory'>
   readonly packageName: Prisma.FieldRef<"Shoot", 'String'>
@@ -1396,6 +1481,7 @@ export interface ShootFieldRefs {
   readonly eventDate: Prisma.FieldRef<"Shoot", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Shoot", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Shoot", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Shoot", 'DateTime'>
 }
     
 

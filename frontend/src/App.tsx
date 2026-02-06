@@ -14,6 +14,7 @@ import PackagesPage from './pages/packages/PackagesPage';
 import ClientsPage from './pages/clients/ClientsPage';
 import ShootsPage from './pages/shoots/ShootsPage';
 import ShootDetailsPage from './pages/shoots/ShootDetailsPage';
+import SettingsPage from './pages/settings/SettingsPage';
 
 import { useTheme } from './context/ThemeContext';
 
@@ -39,6 +40,7 @@ function App() {
               <Route path="/shoots/:id" element={<ShootDetailsPage />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/packages" element={<PackagesPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/roles/create" element={<CreateRolePage />} />
               <Route path="/roles/:id/edit" element={<EditRolePage />} />
             </Route>

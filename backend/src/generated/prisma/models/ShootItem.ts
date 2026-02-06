@@ -47,6 +47,8 @@ export type ShootItemMinAggregateOutputType = {
   isIncluded: boolean | null
   status: $Enums.ShootItemStatus | null
   description: string | null
+  eventDate: Date | null
+  location: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +64,8 @@ export type ShootItemMaxAggregateOutputType = {
   isIncluded: boolean | null
   status: $Enums.ShootItemStatus | null
   description: string | null
+  eventDate: Date | null
+  location: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,6 +81,8 @@ export type ShootItemCountAggregateOutputType = {
   isIncluded: number
   status: number
   description: number
+  eventDate: number
+  location: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +110,8 @@ export type ShootItemMinAggregateInputType = {
   isIncluded?: true
   status?: true
   description?: true
+  eventDate?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -119,6 +127,8 @@ export type ShootItemMaxAggregateInputType = {
   isIncluded?: true
   status?: true
   description?: true
+  eventDate?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -134,6 +144,8 @@ export type ShootItemCountAggregateInputType = {
   isIncluded?: true
   status?: true
   description?: true
+  eventDate?: true
+  location?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -236,6 +248,8 @@ export type ShootItemGroupByOutputType = {
   isIncluded: boolean
   status: $Enums.ShootItemStatus
   description: string | null
+  eventDate: Date | null
+  location: string | null
   createdAt: Date
   updatedAt: Date
   _count: ShootItemCountAggregateOutputType | null
@@ -274,9 +288,12 @@ export type ShootItemWhereInput = {
   isIncluded?: Prisma.BoolFilter<"ShootItem"> | boolean
   status?: Prisma.EnumShootItemStatusFilter<"ShootItem"> | $Enums.ShootItemStatus
   description?: Prisma.StringNullableFilter<"ShootItem"> | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"ShootItem"> | Date | string | null
+  location?: Prisma.StringNullableFilter<"ShootItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
   shoot?: Prisma.XOR<Prisma.ShootScalarRelationFilter, Prisma.ShootWhereInput>
+  assignments?: Prisma.ShootItemAssignmentListRelationFilter
 }
 
 export type ShootItemOrderByWithRelationInput = {
@@ -290,9 +307,12 @@ export type ShootItemOrderByWithRelationInput = {
   isIncluded?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   shoot?: Prisma.ShootOrderByWithRelationInput
+  assignments?: Prisma.ShootItemAssignmentOrderByRelationAggregateInput
 }
 
 export type ShootItemWhereUniqueInput = Prisma.AtLeast<{
@@ -309,9 +329,12 @@ export type ShootItemWhereUniqueInput = Prisma.AtLeast<{
   isIncluded?: Prisma.BoolFilter<"ShootItem"> | boolean
   status?: Prisma.EnumShootItemStatusFilter<"ShootItem"> | $Enums.ShootItemStatus
   description?: Prisma.StringNullableFilter<"ShootItem"> | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"ShootItem"> | Date | string | null
+  location?: Prisma.StringNullableFilter<"ShootItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
   shoot?: Prisma.XOR<Prisma.ShootScalarRelationFilter, Prisma.ShootWhereInput>
+  assignments?: Prisma.ShootItemAssignmentListRelationFilter
 }, "id">
 
 export type ShootItemOrderByWithAggregationInput = {
@@ -325,6 +348,8 @@ export type ShootItemOrderByWithAggregationInput = {
   isIncluded?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  eventDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  location?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ShootItemCountOrderByAggregateInput
@@ -348,6 +373,8 @@ export type ShootItemScalarWhereWithAggregatesInput = {
   isIncluded?: Prisma.BoolWithAggregatesFilter<"ShootItem"> | boolean
   status?: Prisma.EnumShootItemStatusWithAggregatesFilter<"ShootItem"> | $Enums.ShootItemStatus
   description?: Prisma.StringNullableWithAggregatesFilter<"ShootItem"> | string | null
+  eventDate?: Prisma.DateTimeNullableWithAggregatesFilter<"ShootItem"> | Date | string | null
+  location?: Prisma.StringNullableWithAggregatesFilter<"ShootItem"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ShootItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ShootItem"> | Date | string
 }
@@ -362,9 +389,12 @@ export type ShootItemCreateInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   shoot: Prisma.ShootCreateNestedOneWithoutItemsInput
+  assignments?: Prisma.ShootItemAssignmentCreateNestedManyWithoutShootItemInput
 }
 
 export type ShootItemUncheckedCreateInput = {
@@ -378,8 +408,11 @@ export type ShootItemUncheckedCreateInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignments?: Prisma.ShootItemAssignmentUncheckedCreateNestedManyWithoutShootItemInput
 }
 
 export type ShootItemUpdateInput = {
@@ -392,9 +425,12 @@ export type ShootItemUpdateInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shoot?: Prisma.ShootUpdateOneRequiredWithoutItemsNestedInput
+  assignments?: Prisma.ShootItemAssignmentUpdateManyWithoutShootItemNestedInput
 }
 
 export type ShootItemUncheckedUpdateInput = {
@@ -408,8 +444,11 @@ export type ShootItemUncheckedUpdateInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.ShootItemAssignmentUncheckedUpdateManyWithoutShootItemNestedInput
 }
 
 export type ShootItemCreateManyInput = {
@@ -423,6 +462,8 @@ export type ShootItemCreateManyInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -437,6 +478,8 @@ export type ShootItemUpdateManyMutationInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -452,6 +495,8 @@ export type ShootItemUncheckedUpdateManyInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -477,6 +522,8 @@ export type ShootItemCountOrderByAggregateInput = {
   isIncluded?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -497,6 +544,8 @@ export type ShootItemMaxOrderByAggregateInput = {
   isIncluded?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -512,6 +561,8 @@ export type ShootItemMinOrderByAggregateInput = {
   isIncluded?: Prisma.SortOrder
   status?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  eventDate?: Prisma.SortOrder
+  location?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -519,6 +570,11 @@ export type ShootItemMinOrderByAggregateInput = {
 export type ShootItemSumOrderByAggregateInput = {
   pages?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
+}
+
+export type ShootItemScalarRelationFilter = {
+  is?: Prisma.ShootItemWhereInput
+  isNot?: Prisma.ShootItemWhereInput
 }
 
 export type ShootItemCreateNestedManyWithoutShootInput = {
@@ -575,6 +631,20 @@ export type EnumShootItemStatusFieldUpdateOperationsInput = {
   set?: $Enums.ShootItemStatus
 }
 
+export type ShootItemCreateNestedOneWithoutAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.ShootItemCreateWithoutAssignmentsInput, Prisma.ShootItemUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShootItemCreateOrConnectWithoutAssignmentsInput
+  connect?: Prisma.ShootItemWhereUniqueInput
+}
+
+export type ShootItemUpdateOneRequiredWithoutAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ShootItemCreateWithoutAssignmentsInput, Prisma.ShootItemUncheckedCreateWithoutAssignmentsInput>
+  connectOrCreate?: Prisma.ShootItemCreateOrConnectWithoutAssignmentsInput
+  upsert?: Prisma.ShootItemUpsertWithoutAssignmentsInput
+  connect?: Prisma.ShootItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ShootItemUpdateToOneWithWhereWithoutAssignmentsInput, Prisma.ShootItemUpdateWithoutAssignmentsInput>, Prisma.ShootItemUncheckedUpdateWithoutAssignmentsInput>
+}
+
 export type ShootItemCreateWithoutShootInput = {
   id?: string
   name: string
@@ -585,8 +655,11 @@ export type ShootItemCreateWithoutShootInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignments?: Prisma.ShootItemAssignmentCreateNestedManyWithoutShootItemInput
 }
 
 export type ShootItemUncheckedCreateWithoutShootInput = {
@@ -599,8 +672,11 @@ export type ShootItemUncheckedCreateWithoutShootInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignments?: Prisma.ShootItemAssignmentUncheckedCreateNestedManyWithoutShootItemInput
 }
 
 export type ShootItemCreateOrConnectWithoutShootInput = {
@@ -643,8 +719,94 @@ export type ShootItemScalarWhereInput = {
   isIncluded?: Prisma.BoolFilter<"ShootItem"> | boolean
   status?: Prisma.EnumShootItemStatusFilter<"ShootItem"> | $Enums.ShootItemStatus
   description?: Prisma.StringNullableFilter<"ShootItem"> | string | null
+  eventDate?: Prisma.DateTimeNullableFilter<"ShootItem"> | Date | string | null
+  location?: Prisma.StringNullableFilter<"ShootItem"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ShootItem"> | Date | string
+}
+
+export type ShootItemCreateWithoutAssignmentsInput = {
+  id?: string
+  name: string
+  type: $Enums.PackageItemType
+  dimensions?: string | null
+  pages?: number | null
+  quantity?: number
+  isIncluded?: boolean
+  status?: $Enums.ShootItemStatus
+  description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  shoot: Prisma.ShootCreateNestedOneWithoutItemsInput
+}
+
+export type ShootItemUncheckedCreateWithoutAssignmentsInput = {
+  id?: string
+  shootId: string
+  name: string
+  type: $Enums.PackageItemType
+  dimensions?: string | null
+  pages?: number | null
+  quantity?: number
+  isIncluded?: boolean
+  status?: $Enums.ShootItemStatus
+  description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ShootItemCreateOrConnectWithoutAssignmentsInput = {
+  where: Prisma.ShootItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.ShootItemCreateWithoutAssignmentsInput, Prisma.ShootItemUncheckedCreateWithoutAssignmentsInput>
+}
+
+export type ShootItemUpsertWithoutAssignmentsInput = {
+  update: Prisma.XOR<Prisma.ShootItemUpdateWithoutAssignmentsInput, Prisma.ShootItemUncheckedUpdateWithoutAssignmentsInput>
+  create: Prisma.XOR<Prisma.ShootItemCreateWithoutAssignmentsInput, Prisma.ShootItemUncheckedCreateWithoutAssignmentsInput>
+  where?: Prisma.ShootItemWhereInput
+}
+
+export type ShootItemUpdateToOneWithWhereWithoutAssignmentsInput = {
+  where?: Prisma.ShootItemWhereInput
+  data: Prisma.XOR<Prisma.ShootItemUpdateWithoutAssignmentsInput, Prisma.ShootItemUncheckedUpdateWithoutAssignmentsInput>
+}
+
+export type ShootItemUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPackageItemTypeFieldUpdateOperationsInput | $Enums.PackageItemType
+  dimensions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  shoot?: Prisma.ShootUpdateOneRequiredWithoutItemsNestedInput
+}
+
+export type ShootItemUncheckedUpdateWithoutAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  shootId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumPackageItemTypeFieldUpdateOperationsInput | $Enums.PackageItemType
+  dimensions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pages?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type ShootItemCreateManyShootInput = {
@@ -657,6 +819,8 @@ export type ShootItemCreateManyShootInput = {
   isIncluded?: boolean
   status?: $Enums.ShootItemStatus
   description?: string | null
+  eventDate?: Date | string | null
+  location?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -671,8 +835,11 @@ export type ShootItemUpdateWithoutShootInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.ShootItemAssignmentUpdateManyWithoutShootItemNestedInput
 }
 
 export type ShootItemUncheckedUpdateWithoutShootInput = {
@@ -685,8 +852,11 @@ export type ShootItemUncheckedUpdateWithoutShootInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignments?: Prisma.ShootItemAssignmentUncheckedUpdateManyWithoutShootItemNestedInput
 }
 
 export type ShootItemUncheckedUpdateManyWithoutShootInput = {
@@ -699,10 +869,41 @@ export type ShootItemUncheckedUpdateManyWithoutShootInput = {
   isIncluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   status?: Prisma.EnumShootItemStatusFieldUpdateOperationsInput | $Enums.ShootItemStatus
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eventDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type ShootItemCountOutputType
+ */
+
+export type ShootItemCountOutputType = {
+  assignments: number
+}
+
+export type ShootItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assignments?: boolean | ShootItemCountOutputTypeCountAssignmentsArgs
+}
+
+/**
+ * ShootItemCountOutputType without action
+ */
+export type ShootItemCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShootItemCountOutputType
+   */
+  select?: Prisma.ShootItemCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ShootItemCountOutputType without action
+ */
+export type ShootItemCountOutputTypeCountAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ShootItemAssignmentWhereInput
+}
 
 
 export type ShootItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -716,9 +917,13 @@ export type ShootItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   isIncluded?: boolean
   status?: boolean
   description?: boolean
+  eventDate?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   shoot?: boolean | Prisma.ShootDefaultArgs<ExtArgs>
+  assignments?: boolean | Prisma.ShootItem$assignmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShootItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["shootItem"]>
 
 export type ShootItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -732,6 +937,8 @@ export type ShootItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   isIncluded?: boolean
   status?: boolean
   description?: boolean
+  eventDate?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   shoot?: boolean | Prisma.ShootDefaultArgs<ExtArgs>
@@ -748,6 +955,8 @@ export type ShootItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   isIncluded?: boolean
   status?: boolean
   description?: boolean
+  eventDate?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   shoot?: boolean | Prisma.ShootDefaultArgs<ExtArgs>
@@ -764,13 +973,17 @@ export type ShootItemSelectScalar = {
   isIncluded?: boolean
   status?: boolean
   description?: boolean
+  eventDate?: boolean
+  location?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ShootItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shootId" | "name" | "type" | "dimensions" | "pages" | "quantity" | "isIncluded" | "status" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["shootItem"]>
+export type ShootItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "shootId" | "name" | "type" | "dimensions" | "pages" | "quantity" | "isIncluded" | "status" | "description" | "eventDate" | "location" | "createdAt" | "updatedAt", ExtArgs["result"]["shootItem"]>
 export type ShootItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoot?: boolean | Prisma.ShootDefaultArgs<ExtArgs>
+  assignments?: boolean | Prisma.ShootItem$assignmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.ShootItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ShootItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shoot?: boolean | Prisma.ShootDefaultArgs<ExtArgs>
@@ -783,6 +996,7 @@ export type $ShootItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   name: "ShootItem"
   objects: {
     shoot: Prisma.$ShootPayload<ExtArgs>
+    assignments: Prisma.$ShootItemAssignmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -795,6 +1009,8 @@ export type $ShootItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     isIncluded: boolean
     status: $Enums.ShootItemStatus
     description: string | null
+    eventDate: Date | null
+    location: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["shootItem"]>
@@ -1192,6 +1408,7 @@ readonly fields: ShootItemFieldRefs;
 export interface Prisma__ShootItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   shoot<T extends Prisma.ShootDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShootDefaultArgs<ExtArgs>>): Prisma.Prisma__ShootClient<runtime.Types.Result.GetResult<Prisma.$ShootPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  assignments<T extends Prisma.ShootItem$assignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ShootItem$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShootItemAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1231,6 +1448,8 @@ export interface ShootItemFieldRefs {
   readonly isIncluded: Prisma.FieldRef<"ShootItem", 'Boolean'>
   readonly status: Prisma.FieldRef<"ShootItem", 'ShootItemStatus'>
   readonly description: Prisma.FieldRef<"ShootItem", 'String'>
+  readonly eventDate: Prisma.FieldRef<"ShootItem", 'DateTime'>
+  readonly location: Prisma.FieldRef<"ShootItem", 'String'>
   readonly createdAt: Prisma.FieldRef<"ShootItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ShootItem", 'DateTime'>
 }
@@ -1626,6 +1845,30 @@ export type ShootItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Limit how many ShootItems to delete.
    */
   limit?: number
+}
+
+/**
+ * ShootItem.assignments
+ */
+export type ShootItem$assignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ShootItemAssignment
+   */
+  select?: Prisma.ShootItemAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ShootItemAssignment
+   */
+  omit?: Prisma.ShootItemAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ShootItemAssignmentInclude<ExtArgs> | null
+  where?: Prisma.ShootItemAssignmentWhereInput
+  orderBy?: Prisma.ShootItemAssignmentOrderByWithRelationInput | Prisma.ShootItemAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.ShootItemAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ShootItemAssignmentScalarFieldEnum | Prisma.ShootItemAssignmentScalarFieldEnum[]
 }
 
 /**

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 import CreateShootWizard from './components/CreateShootWizard';
+import ShootsCalendar from './components/ShootsCalendar';
 import { useShoots } from '../../hooks/useShoots';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,12 +13,28 @@ const ShootsPage = () => {
     const { hasPermission } = useAuth();
     const { shoots, loading, fetchShoots } = useShoots();
     const [activeTab, setActiveTab] = useState('All Shoots');
-    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'kanban'>('list');
+    const [viewMode, setViewMode] = useState<'list' | 'grid' | 'kanban' | 'calendar'>('list');
     const navigate = useNavigate();
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     React.useEffect(() => {
         fetchShoots();
     }, [fetchShoots]);
+
+    // Calculate pagination
+    const totalItems = Array.isArray(shoots) ? shoots.length : 0;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedShoots = Array.isArray(shoots) ? shoots.slice(startIndex, endIndex) : [];
+
+    // Reset to page 1 when changing view mode or tab
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [viewMode, activeTab]);
 
     return (
         <div className="p-6 space-y-6">
@@ -50,7 +67,8 @@ const ShootsPage = () => {
                         {[
                             { id: 'list', icon: LayoutList, label: 'List' },
                             { id: 'grid', icon: LayoutGrid, label: 'Grid' },
-                            { id: 'kanban', icon: Kanban, label: 'Kanban' }
+                            { id: 'kanban', icon: Kanban, label: 'Kanban' },
+                            { id: 'calendar', icon: Calendar, label: 'Calendar' }
                         ].map((view) => (
                             <button
                                 key={view.id}
@@ -91,7 +109,7 @@ const ShootsPage = () => {
             {/* Tabs (Secondary Row) */}
             <div className="flex p-1 bg-zinc-100/50 dark:bg-zinc-800/40 backdrop-blur-xl rounded-2xl w-fit border border-zinc-200/50 dark:border-white/5 h-fit">
                 {['All Shoots', 'New Shoot', 'Calendar', 'Reports']
-                    .filter(tab => tab !== 'New Shoot' || hasPermission('SHOOT_CREATE')) // Filter out New Shoot tab from bottom nav too if no permission
+                    .filter(tab => tab !== 'New Shoot' || hasPermission('SHOOT_CREATE'))
                     .map((tab) => {
                         const icon = tab === 'All Shoots' ? Package : tab === 'New Shoot' ? Sparkles : tab === 'Calendar' ? Calendar : Filter;
                         return (
@@ -123,7 +141,7 @@ const ShootsPage = () => {
             <div className="min-h-[500px]">
                 <AnimatePresence mode="wait">
                     <motion.div
-                        key={activeTab}
+                        key={activeTab + viewMode}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
@@ -134,7 +152,9 @@ const ShootsPage = () => {
 
 
                                 {/* Content based on View Mode */}
-                                {viewMode === 'kanban' ? (
+                                {viewMode === 'calendar' ? (
+                                    <ShootsCalendar shoots={shoots} />
+                                ) : viewMode === 'kanban' ? (
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-x-auto pb-4">
                                         {['PENDING', 'IN_PROGRESS', 'COMPLETED'].map((status) => {
                                             const statusShoots = Array.isArray(shoots) ? shoots.filter(s => s.status === status) : [];
@@ -187,121 +207,212 @@ const ShootsPage = () => {
                                         })}
                                     </div>
                                 ) : (
-                                    <div className={`grid gap-5 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1'}`}>
-                                        {Array.isArray(shoots) && shoots.map((shoot, index) => {
-                                            // Mock/Computed Values for UI Demo
-                                            const categoryLetter = shoot.category ? shoot.category.charAt(0).toUpperCase() : 'S';
-                                            const shootCode = `${categoryLetter}-${(index + 22).toString().padStart(2, '0')}`; // e.g., W-22
-                                            const progress = Math.floor(Math.random() * 40) + 30; // Mock progress for visual fidelity to design
+                                    <>
+                                        <div className="flex flex-col gap-5">
+                                            {paginatedShoots.map((shoot) => {
+                                                // Calculate real progress from shoot items
+                                                const totalItems = shoot.items?.length || 0;
+                                                const completedItems = shoot.items?.filter(item =>
+                                                    item.status === 'DELIVERED' || item.status === 'READY'
+                                                ).length || 0;
+                                                const progress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-                                            return (
-                                                <motion.div
-                                                    key={shoot.id}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    onClick={() => navigate(`/shoots/${shoot.id}`)}
-                                                    className="group relative overflow-hidden rounded-[2rem] bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-zinc-800/50 p-3 md:p-5 cursor-pointer transition-all hover:border-orange-200 dark:hover:border-zinc-700 hover:shadow-xl hover:shadow-orange-500/5 dark:hover:shadow-orange-900/10"
-                                                >
-                                                    <div className="flex flex-col md:flex-row items-center gap-3 md:gap-5">
+                                                // Determine workflow stage
+                                                let workflowStage = 'Not Started';
+                                                if (shoot.items && shoot.items.length > 0) {
+                                                    const statuses = shoot.items.map(i => i.status);
+                                                    if (statuses.some(s => s === 'DELIVERED')) workflowStage = 'Delivery';
+                                                    else if (statuses.some(s => s === 'READY')) workflowStage = 'Ready';
+                                                    else if (statuses.some(s => s === 'PRINTING')) workflowStage = 'Printing';
+                                                    else if (statuses.some(s => s === 'DESIGNING')) workflowStage = 'Culling Architecture';
+                                                }
 
-                                                        {/* Left: Outline ID */}
-                                                        <div className="shrink-0 relative self-center w-16 md:w-20">
-                                                            <div className="flex items-center justify-center">
-                                                                <span
-                                                                    className="text-4xl md:text-5xl font-black tracking-tighter leading-none text-transparent select-none transition-colors duration-300 stroke-zinc-200 dark:stroke-zinc-700 group-hover:stroke-orange-500"
-                                                                    style={{ WebkitTextStroke: '1px #3f3f46' }} // Zinc-600 outline initially
-                                                                >
-                                                                    {shootCode}
-                                                                    <style>{`
-                                                                        .group:hover span[style*="text-stroke"] {
-                                                                            -webkit-text-stroke-color: #f97316; /* Orange-500 on hover */
-                                                                        }
-                                                                    `}</style>
+                                                // Split shoot code for stacked display (e.g. "W-22" -> "W-" and "22")
+                                                const shootCode = shoot.shootCode || 'N/A';
+                                                const [codePrefix, codeNumber] = shootCode.includes('-')
+                                                    ? shootCode.split('-')
+                                                    : [shootCode, ''];
+
+                                                return (
+                                                    <motion.div
+                                                        key={shoot.id}
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        onClick={() => navigate(`/shoots/${shoot.id}`)}
+                                                        className="group relative flex items-center bg-white dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-[2rem] px-8 py-4 cursor-pointer hover:border-orange-200 dark:hover:border-orange-900/50 transition-all hover:shadow-xl hover:shadow-orange-500/5 dark:hover:shadow-[0_0_40px_-10px_rgba(234,88,12,0.15)] overflow-hidden"
+                                                    >
+                                                        {/* Left Glow/Gradient Effect */}
+                                                        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-orange-500/5 dark:from-orange-900/10 to-transparent pointer-events-none" />
+                                                        <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-24 h-24 bg-orange-500/5 dark:bg-orange-600/10 blur-[50px] rounded-full pointer-events-none group-hover:bg-orange-500/10 dark:group-hover:bg-orange-600/20 transition-all duration-500" />
+
+                                                        {/* 1. Shoot Code Badge */}
+                                                        <div className="shrink-0 w-24 flex flex-col items-center justify-center z-10">
+                                                            <div className="w-16 h-16 bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 rounded-2xl flex flex-col items-center justify-center group-hover:border-orange-500/30 dark:group-hover:border-orange-500/30 transition-colors duration-300 shadow-inner dark:shadow-none">
+                                                                <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-0.5">
+                                                                    {codePrefix}
+                                                                </span>
+                                                                <span className="text-2xl font-black text-zinc-900 dark:text-white font-mono tracking-tighter group-hover:text-orange-600 dark:group-hover:text-orange-500 transition-colors">
+                                                                    {codeNumber}
                                                                 </span>
                                                             </div>
-                                                            <div className="absolute top-1/2 -left-4 w-20 h-20 bg-orange-500/10 dark:bg-orange-500/20 blur-[50px] rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                                         </div>
 
-                                                        {/* Center: Title & Progress */}
-                                                        <div className="flex-1 min-w-0 w-full">
-                                                            <div className="mb-3">
-                                                                <h3 className="text-lg md:text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight mb-1 truncate">
-                                                                    {shoot.client?.name || "Client Name"}
-                                                                </h3>
-                                                                <div className="text-[10px] font-bold text-orange-600 dark:text-orange-500 tracking-[0.2em] uppercase">
-                                                                    {shoot.packageName} • {shoot.category}
-                                                                </div>
-                                                            </div>
+                                                        {/* Divider */}
+                                                        <div className="w-px h-10 bg-zinc-200 dark:bg-zinc-800/50 mx-6" />
 
-                                                            <div className="max-w-md">
-                                                                <div className="flex justify-between text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
-                                                                    <span>Phase: Post-Processing</span>
-                                                                    <span className="text-zinc-900 dark:text-white">{progress}%</span>
-                                                                </div>
-                                                                <div className="h-1.5 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                                                    <div
-                                                                        className="h-full bg-orange-500 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.5)]"
-                                                                        style={{ width: `${progress}%` }}
-                                                                    />
-                                                                </div>
+                                                        {/* 2. Client & Type */}
+                                                        <div className="w-[280px] shrink-0">
+                                                            <h3 className="text-lg font-black text-zinc-900 dark:text-white uppercase tracking-tight mb-1">
+                                                                {shoot.client?.name || "Client Name"}
+                                                            </h3>
+                                                            <div className="text-[9px] font-bold text-orange-600 dark:text-orange-500 tracking-[0.2em] uppercase">
+                                                                {shoot.category?.replace('_', ' ') || 'Shoot'} • {shoot.packageName || 'Package'}
                                                             </div>
                                                         </div>
 
-                                                        {/* Right: Status & Details */}
-                                                        <div className="flex flex-row md:flex-col items-center md:items-end gap-3 md:gap-4 w-full md:w-48 shrink-0 mt-2 md:mt-0 justify-between md:justify-center">
-
-                                                            {/* Status Pill */}
-                                                            <div className={`
-                                                                px-4 py-1.5 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-lg backdrop-blur-sm
-                                                                ${shoot.status === 'COMPLETED' ? 'bg-green-100 dark:bg-green-500/10 border-green-200 dark:border-green-500/20 text-green-700 dark:text-green-500' :
-                                                                    shoot.status === 'SCHEDULED' ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-500 border-orange-200 dark:border-orange-500/20 shadow-orange-500/10' :
-                                                                        'bg-zinc-100 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400'}
-                                                            `}>
-                                                                {shoot.status.replace('_', ' ')}
-                                                            </div>
-
-                                                            {/* Meta Details */}
-                                                            <div className="flex flex-col gap-2 md:text-right">
-                                                                <div className="flex items-center gap-3 justify-end text-zinc-400">
-                                                                    <Calendar size={14} className="text-orange-500" />
-                                                                    <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
-                                                                        {shoot.eventDate ? new Date(shoot.eventDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'TBD'}
+                                                        {/* 3. Workflow Progress */}
+                                                        <div className="flex-1 w-full max-w-[200px] mx-6">
+                                                            <div className="flex flex-col gap-1 mb-2">
+                                                                <span className="text-[8px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
+                                                                    Phase:
+                                                                </span>
+                                                                <div className="flex items-baseline justify-between">
+                                                                    <span className="text-[9px] font-bold text-zinc-600 dark:text-zinc-300 uppercase tracking-wider">
+                                                                        {workflowStage}
                                                                     </span>
-
-                                                                    <span className="text-zinc-300 dark:text-zinc-700">|</span>
-
                                                                     <span className="text-xs font-bold text-zinc-900 dark:text-white">
-                                                                        ${Number(shoot.finalPrice).toLocaleString()}
-                                                                    </span>
-                                                                </div>
-
-                                                                <div className="flex items-center gap-3 justify-end text-zinc-400 dark:text-zinc-500">
-                                                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                                                                    <span className="text-[10px] font-medium tracking-wide">
-                                                                        {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                                                    </span>
-                                                                    <span className="text-[10px] uppercase tracking-wide">
-                                                                        Colombo, LK
+                                                                        {progress}%
                                                                     </span>
                                                                 </div>
                                                             </div>
-
+                                                            <div className="h-1 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                                                <div
+                                                                    className="h-full bg-orange-500 dark:bg-orange-600 rounded-full"
+                                                                    style={{ width: `${progress}%` }}
+                                                                />
+                                                            </div>
                                                         </div>
+
+                                                        {/* 4. Status Badge */}
+                                                        <div className="shrink-0 mx-4">
+                                                            <div className={`
+                                                                px-5 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-[0.2em] border transition-colors
+                                                                ${shoot.status === 'BOOKED' || shoot.status === 'IN_PROGRESS'
+                                                                    ? 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-900/50 text-orange-600 dark:text-orange-500 group-hover:bg-orange-100 dark:group-hover:bg-orange-950/40'
+                                                                    : 'bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700 text-zinc-500'
+                                                                }
+                                                            `}>
+                                                                {shoot.status === 'IN_PROGRESS' ? 'ACTIVE' : shoot.status}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Divider */}
+                                                        <div className="w-px h-10 bg-zinc-200 dark:bg-zinc-800/50 mx-4" />
+
+                                                        {/* 5. Details Grid */}
+                                                        <div className="shrink-0 grid grid-cols-2 gap-x-6 gap-y-2 ml-2">
+                                                            {/* Row 1: Date & Total Price */}
+                                                            <div className="flex items-center gap-2">
+                                                                <Calendar size={12} className="text-orange-600 dark:text-orange-500" />
+                                                                <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">
+                                                                    {shoot.eventDate ? new Date(shoot.eventDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'TBD'}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <svg className="w-3 h-3 text-orange-600 dark:text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400">
+                                                                    LKR {Number(shoot.finalPrice).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                                                </span>
+                                                            </div>
+
+                                                            {/* Row 2: Balance & Location */}
+                                                            <div className="flex items-center gap-2">
+                                                                <svg className="w-3 h-3 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                                </svg>
+                                                                <span className="text-[10px] font-bold text-red-500 dark:text-red-400">
+                                                                    LKR {(() => {
+                                                                        const totalPaid = shoot.payments?.reduce((acc, p) => acc + Number(p.amount), 0) || 0;
+                                                                        const balance = Number(shoot.finalPrice) - totalPaid;
+                                                                        return balance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                                                                    })()}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <svg className="w-3 h-3 text-orange-600 dark:text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                </svg>
+                                                                <span className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 cursor-help" title={shoot.client?.address || 'No Address'}>
+                                                                    {shoot.client?.address ? `${shoot.client.address.slice(0, 10)}${shoot.client.address.length > 10 ? '...' : ''}` : 'No Address'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Pagination Controls */}
+                                        {totalPages > 1 && (
+                                            <div className="flex items-center justify-between mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                                                <div className="text-sm text-zinc-600 dark:text-zinc-400">
+                                                    Showing <span className="font-semibold text-zinc-900 dark:text-white">{startIndex + 1}</span> to <span className="font-semibold text-zinc-900 dark:text-white">{Math.min(endIndex, totalItems)}</span> of <span className="font-semibold text-zinc-900 dark:text-white">{totalItems}</span> shoots
+                                                </div>
+
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                                        disabled={currentPage === 1}
+                                                        className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-medium"
+                                                    >
+                                                        Previous
+                                                    </button>
+
+                                                    <div className="flex items-center gap-1">
+                                                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                                            .filter(page => {
+                                                                // Show first, last, current, and adjacent pages
+                                                                return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1;
+                                                            })
+                                                            .map((page, idx, arr) => (
+                                                                <React.Fragment key={page}>
+                                                                    {idx > 0 && arr[idx - 1] !== page - 1 && (
+                                                                        <span className="px-2 text-zinc-400">...</span>
+                                                                    )}
+                                                                    <button
+                                                                        onClick={() => setCurrentPage(page)}
+                                                                        className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${currentPage === page
+                                                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-black shadow-lg'
+                                                                            : 'border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700'
+                                                                            }`}
+                                                                    >
+                                                                        {page}
+                                                                    </button>
+                                                                </React.Fragment>
+                                                            ))}
                                                     </div>
-                                                </motion.div>
-                                            );
-                                        })}
-                                    </div>
+
+                                                    <button
+                                                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                                        disabled={currentPage === totalPages}
+                                                        className="px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm font-medium"
+                                                    >
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         )}
 
                         {activeTab === 'Calendar' && (
-                            <div className="h-[600px] flex items-center justify-center bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/50 rounded-xl text-zinc-400 dark:text-zinc-500">
-                                <div className="text-center">
-                                    <Calendar size={48} className="mx-auto mb-4 opacity-50" />
-                                    <p>Calendar View Coming Soon</p>
-                                </div>
+                            <div className="animate-in fade-in duration-500">
+                                <ShootsCalendar shoots={shoots} />
                             </div>
                         )}
 
@@ -323,9 +434,9 @@ const ShootsPage = () => {
                             />
                         )}
                     </motion.div>
-                </AnimatePresence>
-            </div>
-        </div>
+                </AnimatePresence >
+            </div >
+        </div >
     );
 };
 

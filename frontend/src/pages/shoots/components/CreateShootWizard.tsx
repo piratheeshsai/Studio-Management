@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, Package, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X, Calendar } from 'lucide-react';
+import { User, Package as PackageIcon, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePackages } from '../../../hooks/usePackages';
 import { useClients } from '../../../hooks/useClients';
@@ -11,22 +11,8 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 // Define types for clarity, assuming they are not globally defined
-interface Client {
-    id: string;
-    name: string;
-    email: string;
-    // Add other client properties as needed
-}
-
-interface Package {
-    id: string;
-    name: string;
-    category: string;
-    basePrice: number;
-    description?: string;
-    items?: any[]; // Define more specifically if possible
-    // Add other package properties as needed
-}
+import type { Client } from '../../../types/client.types';
+import type { Package } from '../../../types/package.types';
 
 interface ShootItem {
     name: string;
@@ -461,7 +447,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                     {/* Shoot Date */}
                     <div className="flex items-center justify-between gap-4">
                         <div className="text-[10px] font-bold uppercase text-zinc-400 tracking-wider shrink-0">Event Date</div>
-                        <div className="relative group w-[130px]">
+                        <div className="relative group w-[135px]">
                             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none z-10" size={14} />
 
                             <style>{`
@@ -569,7 +555,7 @@ const CreateShootWizard: React.FC<CreateShootWizardProps> = ({ onSuccess, onClos
                                                 <div className="w-7 h-7 rounded-lg bg-orange-50 dark:bg-[#1c1c1c] flex items-center justify-center text-orange-600 dark:text-orange-500 border border-transparent dark:border-white/5">
                                                     {item.name.toLowerCase().includes('photo') ? <Image size={12} /> :
                                                         item.name.toLowerCase().includes('album') ? <LayoutTemplate size={12} /> :
-                                                            <Package size={12} />}
+                                                            <PackageIcon size={12} />}
                                                 </div>
                                                 {item.isCustom ? (
                                                     <input

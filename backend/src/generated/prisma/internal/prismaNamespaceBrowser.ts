@@ -54,12 +54,14 @@ export const ModelName = {
   Permission: 'Permission',
   Role: 'Role',
   User: 'User',
+  StudioSettings: 'StudioSettings',
   Package: 'Package',
   PackageItem: 'PackageItem',
   Client: 'Client',
   Shoot: 'Shoot',
   ShootItem: 'ShootItem',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  ShootItemAssignment: 'ShootItemAssignment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -110,6 +112,16 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const StudioSettingsScalarFieldEnum = {
+  id: 'id',
+  enableCrewAssignment: 'enableCrewAssignment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudioSettingsScalarFieldEnum = (typeof StudioSettingsScalarFieldEnum)[keyof typeof StudioSettingsScalarFieldEnum]
+
+
 export const PackageScalarFieldEnum = {
   id: 'id',
   category: 'category',
@@ -157,6 +169,7 @@ export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof 
 
 export const ShootScalarFieldEnum = {
   id: 'id',
+  shootCode: 'shootCode',
   clientId: 'clientId',
   category: 'category',
   packageName: 'packageName',
@@ -165,7 +178,8 @@ export const ShootScalarFieldEnum = {
   description: 'description',
   eventDate: 'eventDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ShootScalarFieldEnum = (typeof ShootScalarFieldEnum)[keyof typeof ShootScalarFieldEnum]
@@ -182,6 +196,8 @@ export const ShootItemScalarFieldEnum = {
   isIncluded: 'isIncluded',
   status: 'status',
   description: 'description',
+  eventDate: 'eventDate',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -201,6 +217,16 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const ShootItemAssignmentScalarFieldEnum = {
+  id: 'id',
+  shootItemId: 'shootItemId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type ShootItemAssignmentScalarFieldEnum = (typeof ShootItemAssignmentScalarFieldEnum)[keyof typeof ShootItemAssignmentScalarFieldEnum]
 
 
 export const SortOrder = {

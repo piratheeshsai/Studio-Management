@@ -33,6 +33,7 @@ export type PackageItemType = (typeof PackageItemType)[keyof typeof PackageItemT
 
 
 export const ShootStatus = {
+  BOOKED: 'BOOKED',
   PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED'

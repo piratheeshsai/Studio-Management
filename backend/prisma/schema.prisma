@@ -38,8 +38,25 @@ model User {
   roleId    String?  @db.Uuid
   role      Role?    @relation(fields: [roleId], references: [id])
   
+  // Crew assignments
+  shootAssignments ShootItemAssignment[]
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ============================================
+// STUDIO SETTINGS
+// ============================================
+
+model StudioSettings {
+  id                    String   @id @default("default")
+  enableCrewAssignment  Boolean  @default(false) @map("enable_crew_assignment")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("studio_settings")
 }
 
 // ============================================
@@ -122,6 +139,7 @@ model Client {
 // ============================================
 
 enum ShootStatus {
+  BOOKED
   PENDING
   IN_PROGRESS
   COMPLETED
@@ -142,11 +160,12 @@ enum PaymentMethod {
 
 model Shoot {
   id          String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shootCode   String      @unique @map("shoot_code") // e.g., "W-01", "CM-42"
   clientId    String      @map("client_id") @db.Uuid
   category    PackageCategory
   packageName String      @map("package_name") // Snapshot of package name
   finalPrice  Decimal     @map("final_price") @db.Decimal(10, 2)
-  status      ShootStatus @default(PENDING)
+  status      ShootStatus @default(BOOKED)
   
   description String?     @db.Text
   eventDate   DateTime?   @map("event_date")
@@ -159,6 +178,7 @@ model Shoot {
   // Timestamps
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
 
   @@map("shoots")
 }
@@ -175,8 +195,13 @@ model ShootItem {
   status         ShootItemStatus @default(DESIGNING)
   description    String?         @db.Text
   
+  // EVENT type specific fields
+  eventDate      DateTime?       @map("event_date")
+  location       String?
+  
   // Relationships
   shoot          Shoot           @relation(fields: [shootId], references: [id], onDelete: Cascade)
+  assignments    ShootItemAssignment[]
   
   // Timestamps
   createdAt      DateTime        @default(now()) @map("created_at")
@@ -201,4 +226,22 @@ model Payment {
   updatedAt   DateTime      @updatedAt @map("updated_at")
 
   @@map("payments")
+}
+
+// ============================================
+// CREW ASSIGNMENT
+// ============================================
+
+model ShootItemAssignment {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shootItemId  String    @map("shoot_item_id") @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  
+  shootItem    ShootItem @relation(fields: [shootItemId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime  @default(now()) @map("created_at")
+  
+  @@unique([shootItemId, userId])
+  @@map("shoot_item_assignments")
 }

@@ -387,12 +387,14 @@ export const ModelName = {
   Permission: 'Permission',
   Role: 'Role',
   User: 'User',
+  StudioSettings: 'StudioSettings',
   Package: 'Package',
   PackageItem: 'PackageItem',
   Client: 'Client',
   Shoot: 'Shoot',
   ShootItem: 'ShootItem',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  ShootItemAssignment: 'ShootItemAssignment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -408,7 +410,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "permission" | "role" | "user" | "package" | "packageItem" | "client" | "shoot" | "shootItem" | "payment"
+    modelProps: "permission" | "role" | "user" | "studioSettings" | "package" | "packageItem" | "client" | "shoot" | "shootItem" | "payment" | "shootItemAssignment"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -631,6 +633,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    StudioSettings: {
+      payload: Prisma.$StudioSettingsPayload<ExtArgs>
+      fields: Prisma.StudioSettingsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StudioSettingsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StudioSettingsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        findFirst: {
+          args: Prisma.StudioSettingsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StudioSettingsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        findMany: {
+          args: Prisma.StudioSettingsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>[]
+        }
+        create: {
+          args: Prisma.StudioSettingsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        createMany: {
+          args: Prisma.StudioSettingsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StudioSettingsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>[]
+        }
+        delete: {
+          args: Prisma.StudioSettingsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        update: {
+          args: Prisma.StudioSettingsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        deleteMany: {
+          args: Prisma.StudioSettingsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StudioSettingsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StudioSettingsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>[]
+        }
+        upsert: {
+          args: Prisma.StudioSettingsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StudioSettingsPayload>
+        }
+        aggregate: {
+          args: Prisma.StudioSettingsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStudioSettings>
+        }
+        groupBy: {
+          args: Prisma.StudioSettingsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StudioSettingsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StudioSettingsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StudioSettingsCountAggregateOutputType> | number
         }
       }
     }
@@ -1078,6 +1154,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ShootItemAssignment: {
+      payload: Prisma.$ShootItemAssignmentPayload<ExtArgs>
+      fields: Prisma.ShootItemAssignmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShootItemAssignmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShootItemAssignmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        findFirst: {
+          args: Prisma.ShootItemAssignmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShootItemAssignmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        findMany: {
+          args: Prisma.ShootItemAssignmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>[]
+        }
+        create: {
+          args: Prisma.ShootItemAssignmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        createMany: {
+          args: Prisma.ShootItemAssignmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShootItemAssignmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>[]
+        }
+        delete: {
+          args: Prisma.ShootItemAssignmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        update: {
+          args: Prisma.ShootItemAssignmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.ShootItemAssignmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShootItemAssignmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShootItemAssignmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.ShootItemAssignmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShootItemAssignmentPayload>
+        }
+        aggregate: {
+          args: Prisma.ShootItemAssignmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShootItemAssignment>
+        }
+        groupBy: {
+          args: Prisma.ShootItemAssignmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootItemAssignmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShootItemAssignmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShootItemAssignmentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1149,6 +1299,16 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const StudioSettingsScalarFieldEnum = {
+  id: 'id',
+  enableCrewAssignment: 'enableCrewAssignment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StudioSettingsScalarFieldEnum = (typeof StudioSettingsScalarFieldEnum)[keyof typeof StudioSettingsScalarFieldEnum]
+
+
 export const PackageScalarFieldEnum = {
   id: 'id',
   category: 'category',
@@ -1196,6 +1356,7 @@ export type ClientScalarFieldEnum = (typeof ClientScalarFieldEnum)[keyof typeof 
 
 export const ShootScalarFieldEnum = {
   id: 'id',
+  shootCode: 'shootCode',
   clientId: 'clientId',
   category: 'category',
   packageName: 'packageName',
@@ -1204,7 +1365,8 @@ export const ShootScalarFieldEnum = {
   description: 'description',
   eventDate: 'eventDate',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ShootScalarFieldEnum = (typeof ShootScalarFieldEnum)[keyof typeof ShootScalarFieldEnum]
@@ -1221,6 +1383,8 @@ export const ShootItemScalarFieldEnum = {
   isIncluded: 'isIncluded',
   status: 'status',
   description: 'description',
+  eventDate: 'eventDate',
+  location: 'location',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1240,6 +1404,16 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const ShootItemAssignmentScalarFieldEnum = {
+  id: 'id',
+  shootItemId: 'shootItemId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type ShootItemAssignmentScalarFieldEnum = (typeof ShootItemAssignmentScalarFieldEnum)[keyof typeof ShootItemAssignmentScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1516,12 +1690,14 @@ export type GlobalOmitConfig = {
   permission?: Prisma.PermissionOmit
   role?: Prisma.RoleOmit
   user?: Prisma.UserOmit
+  studioSettings?: Prisma.StudioSettingsOmit
   package?: Prisma.PackageOmit
   packageItem?: Prisma.PackageItemOmit
   client?: Prisma.ClientOmit
   shoot?: Prisma.ShootOmit
   shootItem?: Prisma.ShootItemOmit
   payment?: Prisma.PaymentOmit
+  shootItemAssignment?: Prisma.ShootItemAssignmentOmit
 }
 
 /* Types for Logging */

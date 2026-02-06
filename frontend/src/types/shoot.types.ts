@@ -1,9 +1,9 @@
 
 export const ShootStatus = {
+  BOOKED: 'BOOKED',
   PENDING: 'PENDING',
-  SCHEDULED: 'SCHEDULED',
+  IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED',
 } as const;
 
 export type ShootStatus = (typeof ShootStatus)[keyof typeof ShootStatus];
@@ -40,12 +40,14 @@ export interface Payment {
 
 export interface Shoot {
   id: string;
+  shootCode: string; // e.g., "W-01", "CM-42", "BS-15"
   clientId: string;
   client?: {
     id: string;
     name: string;
     email?: string;
     phone?: string;
+    address?: string;
   };
   category: string;
   packageName: string;

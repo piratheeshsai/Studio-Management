@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateShootDto } from './dto/create-shoot.dto';
 import { ShootStatus, ShootItemStatus, PaymentMethod } from '../generated/prisma/client';
+import { generateShootCode } from './utils/generateShootCode';
 
 @Injectable()
 export class ShootsService {
@@ -19,10 +20,14 @@ export class ShootsService {
       throw new NotFoundException('Package not found');
     }
 
-    // 2. Create Shoot and Copy Items
+    // 2. Generate shoot code
+    const shootCode = await generateShootCode(this.prisma, pkg.category);
+
+    // 3. Create Shoot and Copy Items
     return this.prisma.$transaction(async (tx) => {
       const shoot = await tx.shoot.create({
         data: {
+          shootCode,
           clientId: data.clientId,
           category: pkg.category, // Use category from package (or from dto if overridden allowed)
           packageName: pkg.name,
@@ -62,11 +67,13 @@ export class ShootsService {
 
   async findAll() {
     return this.prisma.shoot.findMany({
+      where: {
+        deletedAt: null, // Exclude soft-deleted shoots
+      },
       include: {
         client: true,
-        _count: {
-            select: { items: true, payments: true }
-        }
+        items: true,
+        payments: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -113,6 +120,14 @@ export class ShootsService {
         note: data.note,
         date: data.date ? new Date(data.date) : new Date(),
       },
+    });
+  }
+
+  async remove(id: string) {
+    // Soft delete: set deletedAt timestamp instead of actually deleting
+    return this.prisma.shoot.update({
+      where: { id },
+      data: { deletedAt: new Date() },
     });
   }
 }
