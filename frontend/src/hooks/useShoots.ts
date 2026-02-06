@@ -67,6 +67,47 @@ export const useShoots = () => {
         }
     };
 
+    // ============================================
+    // CREW ASSIGNMENT METHODS
+    // ============================================
+
+    const assignUserToItem = async (itemId: string, userId: string) => {
+        try {
+            const { data } = await api.post(`/shoots/items/${itemId}/assignments`, { userId });
+            toast.success('User assigned');
+            return data;
+        } catch (err: any) {
+            toast.error('Failed to assign user');
+            throw err;
+        }
+    };
+
+    const unassignUserFromItem = async (itemId: string, userId: string) => {
+        try {
+            await api.delete(`/shoots/items/${itemId}/assignments/${userId}`);
+            toast.success('User unassigned');
+        } catch (err: any) {
+            toast.error('Failed to unassign user');
+            throw err;
+        }
+    };
+
+    const updateItemDetails = async (itemId: string, data: {
+        status?: string;
+        eventDate?: string;
+        location?: string;
+        isIncluded?: boolean;
+    }) => {
+        try {
+            const { data: updated } = await api.patch(`/shoots/items/${itemId}/details`, data);
+            toast.success('Item updated');
+            return updated;
+        } catch (err: any) {
+            toast.error('Failed to update item');
+            throw err;
+        }
+    };
+
     return {
         shoots,
         loading,
@@ -75,6 +116,9 @@ export const useShoots = () => {
         createShoot,
         getShoot,
         updateShootItem,
-        addPayment
+        addPayment,
+        assignUserToItem,
+        unassignUserFromItem,
+        updateItemDetails,
     };
 };

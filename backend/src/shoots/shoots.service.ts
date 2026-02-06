@@ -85,7 +85,16 @@ export class ShootsService {
       include: {
         client: true,
         items: {
-            orderBy: { createdAt: 'asc' }
+            orderBy: { createdAt: 'asc' },
+            include: {
+              assignments: {
+                include: {
+                  user: {
+                    select: { id: true, name: true, email: true, role: { select: { name: true } } },
+                  },
+                },
+              },
+            },
         },
         payments: {
             orderBy: { date: 'desc' }
@@ -128,6 +137,74 @@ export class ShootsService {
     return this.prisma.shoot.update({
       where: { id },
       data: { deletedAt: new Date() },
+    });
+  }
+
+  // ============================================
+  // CREW ASSIGNMENT METHODS
+  // ============================================
+
+  async assignUserToItem(shootItemId: string, userId: string) {
+    return this.prisma.shootItemAssignment.create({
+      data: {
+        shootItemId,
+        userId,
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true, role: { select: { name: true } } },
+        },
+      },
+    });
+  }
+
+  async unassignUserFromItem(shootItemId: string, userId: string) {
+    return this.prisma.shootItemAssignment.deleteMany({
+      where: {
+        shootItemId,
+        userId,
+      },
+    });
+  }
+
+  async getItemAssignments(shootItemId: string) {
+    return this.prisma.shootItemAssignment.findMany({
+      where: { shootItemId },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true, role: { select: { name: true } } },
+        },
+      },
+    });
+  }
+
+  async updateItemWithEventDetails(
+    itemId: string, 
+    data: { 
+      status?: ShootItemStatus; 
+      dimensions?: string; 
+      pages?: number; 
+      isIncluded?: boolean;
+      eventDate?: string;
+      location?: string;
+    }
+  ) {
+    const updateData: any = { ...data };
+    if (data.eventDate) {
+      updateData.eventDate = new Date(data.eventDate);
+    }
+    return this.prisma.shootItem.update({
+      where: { id: itemId },
+      data: updateData,
+      include: {
+        assignments: {
+          include: {
+            user: {
+              select: { id: true, name: true, email: true, role: { select: { name: true } } },
+            },
+          },
+        },
+      },
     });
   }
 }

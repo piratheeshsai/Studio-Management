@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api } from '../lib/api';
+import apiClient from '../services/api/apiClient';
 
 interface StudioSettings {
   id: string;
@@ -16,7 +16,7 @@ export const useSettings = () => {
   const fetchSettings = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get('/settings');
+      const response = await apiClient.get('/settings');
       setSettings(response.data);
       setError(null);
     } catch (err: any) {
@@ -28,7 +28,7 @@ export const useSettings = () => {
 
   const updateSettings = useCallback(async (data: Partial<StudioSettings>) => {
     try {
-      const response = await api.put('/settings', data);
+      const response = await apiClient.put('/settings', data);
       setSettings(response.data);
       return response.data;
     } catch (err: any) {

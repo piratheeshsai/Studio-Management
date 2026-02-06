@@ -289,20 +289,58 @@ const ShootDetailsPage = () => {
                                 onClick={() => setEditingItem(item)}
                                 className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-4 border border-zinc-100 dark:border-zinc-700/50 cursor-pointer hover:border-orange-500/50 transition-all"
                             >
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-orange-500/20 rounded-lg">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-start gap-3">
+                                        <div className="p-2 bg-orange-500/20 rounded-lg mt-0.5">
                                             <Calendar size={16} className="text-orange-500" />
                                         </div>
-                                        <div>
+                                        <div className="flex-1">
                                             <div className="text-zinc-900 dark:text-white font-medium">{item.name}</div>
-                                            {item.description && (
-                                                <div className="text-zinc-500 text-xs mt-0.5">{item.description}</div>
+
+                                            {/* Event Date & Location */}
+                                            <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-zinc-500">
+                                                {item.eventDate && (
+                                                    <span className="flex items-center gap-1">
+                                                        <Clock size={10} />
+                                                        {new Date(item.eventDate).toLocaleDateString()}
+                                                    </span>
+                                                )}
+                                                {item.location && (
+                                                    <span className="flex items-center gap-1">
+                                                        <MapPin size={10} />
+                                                        {item.location}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Assigned Crew */}
+                                            {item.assignments && item.assignments.length > 0 && (
+                                                <div className="flex items-center gap-1 mt-2">
+                                                    <div className="flex -space-x-2">
+                                                        {item.assignments.slice(0, 3).map((a: any, i: number) => (
+                                                            <div
+                                                                key={a.user.id}
+                                                                className="w-6 h-6 rounded-full bg-orange-500 border-2 border-white dark:border-zinc-800 flex items-center justify-center text-[10px] text-white font-medium"
+                                                                title={a.user.name}
+                                                            >
+                                                                {a.user.name?.charAt(0).toUpperCase()}
+                                                            </div>
+                                                        ))}
+                                                        {item.assignments.length > 3 && (
+                                                            <div className="w-6 h-6 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600 dark:text-zinc-300 font-medium">
+                                                                +{item.assignments.length - 3}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[10px] text-zinc-400 ml-1">
+                                                        {item.assignments.map((a: any) => a.user.name).join(', ')}
+                                                    </span>
+                                                </div>
                                             )}
                                         </div>
                                     </div>
                                     <span className={`
-                                        px-2 py-1 text-xs font-medium rounded
+                                        px-2 py-1 text-xs font-medium rounded shrink-0
                                         ${item.status === 'DELIVERED' || item.status === 'READY'
                                             ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                                             : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
@@ -388,6 +426,7 @@ const ShootDetailsPage = () => {
                     await updateShootItem(editingItem.id, data);
                     refreshShoot();
                 }}
+                onRefresh={refreshShoot}
             />
 
             <AddPaymentModal
