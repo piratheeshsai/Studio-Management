@@ -3,29 +3,26 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     ArrowLeft,
-    Calendar,
     CheckCircle,
-    Circle,
-    CreditCard,
     FileText,
-    MapPin,
-    Package,
     Printer,
     Scissors,
     Camera,
     Image,
     Plus,
-    ExternalLink,
     Download,
     Eye,
     Clock,
-    Sparkles,
+    Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { useShoots } from '../../hooks/useShoots';
 import EditShootItemModal from './components/EditShootItemModal';
 import AddPaymentModal from './components/AddPaymentModal';
+
+import ProductionLogistics from './components/ProductionLogistics';
+import PhysicalDeliverables from './components/PhysicalDeliverables';
 
 // Pipeline stages for the workflow
 const PIPELINE_STAGES = [
@@ -48,14 +45,7 @@ const getStageFromStatus = (status: string): number => {
     }
 };
 
-// Get item type icon
-const getItemIcon = (type: string) => {
-    const t = type?.toLowerCase() || '';
-    if (t.includes('album') || t.includes('magazine')) return FileText;
-    if (t.includes('frame') || t.includes('portrait')) return Image;
-    if (t.includes('usb') || t.includes('drive')) return Package;
-    return Package;
-};
+
 
 const ShootDetailsPage = () => {
     const { id } = useParams();
@@ -99,7 +89,7 @@ const ShootDetailsPage = () => {
 
     const totalPaid = shoot.payments?.reduce((acc: number, p: any) => acc + Number(p.amount), 0) || 0;
     const balance = Number(shoot.finalPrice) - totalPaid;
-    const paymentProgress = Math.min((totalPaid / Number(shoot.finalPrice)) * 100, 100);
+
 
     // Calculate deliverables progress
     const totalItems = shoot.items?.length || 0;
@@ -269,150 +259,23 @@ const ShootDetailsPage = () => {
                     </div>
                 </div>
 
-                {/* ===== LOGISTICS & EVENTS (Bottom Left) ===== */}
-                <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
-                            <MapPin size={16} className="text-orange-500" />
-                            <span className="text-sm font-medium">Production Logistics</span>
-                        </div>
-                        <button className="text-xs text-orange-600 dark:text-orange-500 hover:text-orange-700 dark:hover:text-orange-400 flex items-center gap-1">
-                            View Full Itinerary <ExternalLink size={12} />
-                        </button>
+                {/* ===== LOGISTICS & DELIVERABLES (Split Rows) ===== */}
+                <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    {/* 1. Production Logistics Card */}
+                    <div className="lg:col-span-2">
+                        <ProductionLogistics
+                            items={shoot.items}
+                            onEditItem={setEditingItem}
+                        />
                     </div>
 
-                    <div className="space-y-3">
-                        {/* EVENT type items */}
-                        {shoot.items?.filter((item: any) => item.type === 'EVENT').map((item: any) => (
-                            <div
-                                key={item.id}
-                                onClick={() => setEditingItem(item)}
-                                className="bg-zinc-50 dark:bg-zinc-800/50 rounded-xl p-4 border border-zinc-100 dark:border-zinc-700/50 cursor-pointer hover:border-orange-500/50 transition-all"
-                            >
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-orange-500/20 rounded-lg mt-0.5">
-                                            <Calendar size={16} className="text-orange-500" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="text-zinc-900 dark:text-white font-medium">{item.name}</div>
-
-                                            {/* Event Date & Location */}
-                                            <div className="flex flex-wrap items-center gap-3 mt-1.5 text-xs text-zinc-500">
-                                                {item.eventDate && (
-                                                    <span className="flex items-center gap-1">
-                                                        <Clock size={10} />
-                                                        {new Date(item.eventDate).toLocaleDateString()}
-                                                    </span>
-                                                )}
-                                                {item.location && (
-                                                    <span className="flex items-center gap-1">
-                                                        <MapPin size={10} />
-                                                        {item.location}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {/* Assigned Crew */}
-                                            {item.assignments && item.assignments.length > 0 && (
-                                                <div className="flex items-center gap-1 mt-2">
-                                                    <div className="flex -space-x-2">
-                                                        {item.assignments.slice(0, 3).map((a: any, i: number) => (
-                                                            <div
-                                                                key={a.user.id}
-                                                                className="w-6 h-6 rounded-full bg-orange-500 border-2 border-white dark:border-zinc-800 flex items-center justify-center text-[10px] text-white font-medium"
-                                                                title={a.user.name}
-                                                            >
-                                                                {a.user.name?.charAt(0).toUpperCase()}
-                                                            </div>
-                                                        ))}
-                                                        {item.assignments.length > 3 && (
-                                                            <div className="w-6 h-6 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-800 flex items-center justify-center text-[10px] text-zinc-600 dark:text-zinc-300 font-medium">
-                                                                +{item.assignments.length - 3}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-[10px] text-zinc-400 ml-1">
-                                                        {item.assignments.map((a: any) => a.user.name).join(', ')}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <span className={`
-                                        px-2 py-1 text-xs font-medium rounded shrink-0
-                                        ${item.status === 'DELIVERED' || item.status === 'READY'
-                                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                                            : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
-                                        }
-                                    `}>
-                                        {item.status}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
-
-                        {/* Empty state for events */}
-                        {(!shoot.items || shoot.items.filter((i: any) => i.type === 'EVENT').length === 0) && (
-                            <div className="text-center py-6 text-zinc-400 dark:text-zinc-600 text-sm">
-                                No events added yet
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* ===== DELIVERABLES CHECKLIST (Bottom Right - Spans 2 cols) ===== */}
-                <div className="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none">
-                    <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 mb-6">
-                        <Package size={16} className="text-orange-500" />
-                        <span className="text-sm font-medium">Physical Deliverables</span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {shoot.items?.filter((item: any) => item.type === 'PRODUCT').map((item: any) => {
-                            const ItemIcon = getItemIcon(item.type || item.name);
-                            const isReady = item.status === 'READY' || item.status === 'DELIVERED';
-
-                            return (
-                                <div
-                                    key={item.id}
-                                    onClick={() => setEditingItem(item)}
-                                    className={`
-                                            flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all
-                                            ${isReady
-                                            ? 'bg-zinc-50 dark:bg-zinc-800/30 border-zinc-100 dark:border-zinc-700/50'
-                                            : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700 hover:border-orange-500/50'
-                                        }
-                                        `}
-                                >
-                                    <div className={`p-2 rounded-lg ${isReady ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400'}`}>
-                                        <ItemIcon size={20} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="text-zinc-900 dark:text-white font-medium truncate">{item.name}</div>
-                                        <div className="text-zinc-500 text-xs truncate">
-                                            {item.dimensions && `${item.dimensions}`}
-                                            {item.pages && ` • ${item.pages} pages`}
-                                        </div>
-                                    </div>
-                                    <span className={`
-                                            px-2 py-1 text-xs font-medium rounded
-                                            ${isReady
-                                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                                            : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'
-                                        }
-                                        `}>
-                                        {item.status}
-                                    </span>
-                                </div>
-                            );
-                        })}
-
-                        {(!shoot.items || shoot.items.filter((i: any) => i.type === 'PRODUCT').length === 0) && (
-                            <div className="col-span-2 text-center py-8 text-zinc-400 dark:text-zinc-600">
-                                No production items added yet
-                            </div>
-                        )}
+                    {/* 2. Physical Deliverables Card */}
+                    <div>
+                        <PhysicalDeliverables
+                            items={shoot.items}
+                            onEditItem={setEditingItem}
+                        />
                     </div>
                 </div>
             </div>

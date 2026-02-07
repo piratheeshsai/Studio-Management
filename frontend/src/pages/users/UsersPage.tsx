@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ShieldCheck, Search, RefreshCw, Plus } from 'lucide-react';
 import UserManagement from './components/UserManagement';

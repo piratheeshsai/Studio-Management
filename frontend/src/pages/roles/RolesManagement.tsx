@@ -12,7 +12,7 @@ interface RolesManagementProps {
     roles: Role[];
     loading: boolean;
     fetchRoles: () => void;
-    deleteRole: (id: string) => Promise<void>;
+    deleteRole: (id: string) => Promise<boolean>;
 }
 
 const RolesManagement = ({ searchQuery, roles, loading, fetchRoles, deleteRole }: RolesManagementProps) => {
@@ -56,8 +56,10 @@ const RolesManagement = ({ searchQuery, roles, loading, fetchRoles, deleteRole }
                 onClose={() => setRoleToDelete(null)}
                 onConfirm={async () => {
                     if (roleToDelete) {
-                        await deleteRole(roleToDelete.id);
-                        setRoleToDelete(null);
+                        const success = await deleteRole(roleToDelete.id);
+                        if (success) {
+                            setRoleToDelete(null);
+                        }
                     }
                 }}
                 title="Delete Role"

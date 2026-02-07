@@ -28,6 +28,11 @@ export interface ShootItem {
   isIncluded: boolean;
   status: ShootItemStatus;
   description?: string;
+  // Event details
+  eventDate?: string;
+  startTime?: string;
+  endTime?: string;
+  location?: string;
 }
 
 export interface Payment {

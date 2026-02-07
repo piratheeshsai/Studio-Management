@@ -14,9 +14,9 @@ interface UserManagementProps {
     loading: boolean;
     error: string | null;
     refetch: () => void;
-    deactivateUser: (id: string) => Promise<void>;
-    activateUser: (id: string) => Promise<void>;
-    deleteUser: (id: string) => Promise<void>;
+    deactivateUser: (id: string) => Promise<boolean>;
+    activateUser: (id: string) => Promise<boolean>;
+    deleteUser: (id: string) => Promise<boolean>;
     setIsAddUserModalOpen: (isOpen: boolean) => void;
     isAddUserModalOpen: boolean;
 }

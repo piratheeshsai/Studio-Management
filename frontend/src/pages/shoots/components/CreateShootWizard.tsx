@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, Package as PackageIcon, Loader2, Search, Plus, Check, ChevronRight, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X, Calendar } from 'lucide-react';
+import { Package as PackageIcon, Loader2, Search, Plus, Check, Minus, MoreHorizontal, Image, LayoutTemplate, Wand2, Filter, ChevronDown, Trash2, X, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePackages } from '../../../hooks/usePackages';
 import { useClients } from '../../../hooks/useClients';
